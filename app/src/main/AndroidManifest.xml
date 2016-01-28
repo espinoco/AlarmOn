@@ -1,32 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.angrydoughnuts.android.alarmclock"
-      xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.9" android:versionCode="10">
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          android:versionName="1.9" android:versionCode="10">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <!-- This is for debug releases only! -->
-    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission> -->
+  <uses-permission android:name="android.permission.WAKE_LOCK"/>
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+  <uses-permission android:name="android.permission.VIBRATE"/>
+  <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <!-- This is for debug releases only! -->
+  <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission> -->
 
-    <!-- android:debugable for debug release only! -->
-    <!-- <application android:icon="@drawable/alarmclock" android:label="@string/app_name" android:debuggable="true"> -->
+  <!-- android:debugable for debug release only! -->
+  <!-- <application android:icon="@drawable/alarmclock" android:label="@string/app_name" android:debuggable="true"> -->
 
   <application
       android:allowBackup="true"
       android:icon="@drawable/alarmclock"
       android:label="@string/app_name">
-    <activity android:name=".ActivityAlarmClock" android:launchMode="singleTask">
+    <activity
+        android:name=".ActivityAlarmClock"
+        android:launchMode="singleTask">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
-    <activity android:name="ActivityAlarmNotification" android:launchMode="singleInstance" android:screenOrientation="portrait"/>
-    <activity android:name="ActivityAlarmSettings" android:finishOnTaskLaunch="true"/>
-    <activity android:name="ActivityAppSettings" android:finishOnTaskLaunch="true"/>
-    <activity android:name="ActivityPendingAlarms" android:finishOnTaskLaunch="true"/>
+    <activity
+        android:name="ActivityAlarmNotification"
+        android:launchMode="singleInstance"
+        android:screenOrientation="portrait"/>
+    <activity
+        android:name="ActivityAlarmSettings"
+        android:finishOnTaskLaunch="true"/>
+    <activity
+        android:name="ActivityAppSettings"
+        android:finishOnTaskLaunch="true"/>
+    <activity
+        android:name="ActivityPendingAlarms"
+        android:finishOnTaskLaunch="true"/>
     <service android:name="AlarmClockService"/>
     <service android:name="NotificationService"/>
     <receiver android:name="ReceiverAlarm"/>
