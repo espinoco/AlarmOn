@@ -1,0 +1,15 @@
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/build
+/captures
+.DS_Store
+Thumbs.db
+*~
+
+# gnu global
+/GPATH
+/GRTAGS
+/GTAGS
