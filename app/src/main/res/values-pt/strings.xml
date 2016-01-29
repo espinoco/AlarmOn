@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Translation by Thiago Elias <thi747@gmail.com> -->
 <resources>
-  <string name="app_name">Alarm Klock</string>
+  <string name="app_name">Alarm On</string>
   <string name="add_alarm">Adicionar alarme</string>
   <string name="default_settings">Configurações Padrões de Alarme</string>
   <string name="app_settings">Configurações de Aplicação</string>
