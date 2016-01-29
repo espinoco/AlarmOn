@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.angrydoughnuts.android.alarmclock"
+<manifest package="io.github.carlorodriguez.alarmon"
           xmlns:android="http://schemas.android.com/apk/res/android"
           android:versionName="1.9" android:versionCode="10">
 
@@ -19,7 +19,7 @@
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name">
     <activity
-        android:name=".ActivityAlarmClock"
+        android:name="io.github.carlorodriguez.alarmon.ActivityAlarmClock"
         android:launchMode="singleTask">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -27,23 +27,23 @@
       </intent-filter>
     </activity>
     <activity
-        android:name="ActivityAlarmNotification"
+        android:name="io.github.carlorodriguez.alarmon.ActivityAlarmNotification"
         android:launchMode="singleInstance"
         android:screenOrientation="portrait"/>
     <activity
-        android:name="ActivityAlarmSettings"
+        android:name="io.github.carlorodriguez.alarmon.ActivityAlarmSettings"
         android:finishOnTaskLaunch="true"/>
     <activity
-        android:name="ActivityAppSettings"
+        android:name="io.github.carlorodriguez.alarmon.ActivityAppSettings"
         android:finishOnTaskLaunch="true"/>
     <activity
-        android:name="ActivityPendingAlarms"
+        android:name="io.github.carlorodriguez.alarmon.ActivityPendingAlarms"
         android:finishOnTaskLaunch="true"/>
-    <service android:name="AlarmClockService"/>
-    <service android:name="NotificationService"/>
-    <receiver android:name="ReceiverAlarm"/>
-    <receiver android:name="ReceiverNotificationRefresh"/>
-    <receiver android:name="ReceiverDeviceBoot">
+    <service android:name="io.github.carlorodriguez.alarmon.AlarmClockService"/>
+    <service android:name="io.github.carlorodriguez.alarmon.NotificationService"/>
+    <receiver android:name="io.github.carlorodriguez.alarmon.ReceiverAlarm"/>
+    <receiver android:name="io.github.carlorodriguez.alarmon.ReceiverNotificationRefresh"/>
+    <receiver android:name="io.github.carlorodriguez.alarmon.ReceiverDeviceBoot">
       <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED"/>
       </intent-filter>
@@ -52,7 +52,7 @@
         <data android:scheme="package" />
       </intent-filter>
     </receiver>
-    <receiver android:name="RecevierTimeZoneChange">
+    <receiver android:name="io.github.carlorodriguez.alarmon.RecevierTimeZoneChange">
       <intent-filter>
         <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
       </intent-filter>

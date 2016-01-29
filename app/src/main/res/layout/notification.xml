@@ -53,7 +53,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
 
-  <com.angrydoughnuts.android.alarmclock.Slider
+  <io.github.carlorodriguez.alarmon.Slider
     android:id="@+id/dismiss_slider"
     android:layout_weight="1"
     android:layout_width="fill_parent"

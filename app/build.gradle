@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.angrydoughnuts.android.alarmclock"
+        applicationId "io.github.carlorodriguez.alarmon"
         minSdkVersion 14
         targetSdkVersion 23
     }
