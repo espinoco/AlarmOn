@@ -10,7 +10,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  ****************************************************************************/
 
 package com.angrydoughnuts.android.alarmclock;
@@ -20,12 +20,13 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,13 +45,16 @@ import android.widget.AdapterView.OnItemClickListener;
  * mode.'
  */
 public final class ActivityAlarmClock extends Activity {
-  private enum Dialogs { TIME_PICKER, DELETE_CONFIRM };
-  private enum Menus { DELETE_ALL, DEFAULT_ALARM_SETTINGS, APP_SETTINGS };
 
-  private AlarmClockServiceBinder service;
+    public static final int TIME_PICKER = 0;
+    public static final int DELETE_CONFIRM = 1;
+
+  private enum Menus { DELETE_ALL, DEFAULT_ALARM_SETTINGS, APP_SETTINGS }
+
+  private static AlarmClockServiceBinder service;
   private NotificationServiceBinder notifyService;
   private DbAccessor db;
-  private AlarmViewAdapter adapter;
+  private static AlarmViewAdapter adapter;
   private TextView clock;
   private Button testBtn;
   private Button pendingBtn;
@@ -101,7 +105,7 @@ public final class ActivityAlarmClock extends Activity {
     Button addBtn = (Button) findViewById(R.id.add_alarm);
     addBtn.setOnClickListener(new View.OnClickListener() {
       public void onClick(View view) {
-        showDialog(Dialogs.TIME_PICKER.ordinal());
+          showDialogFragment(TIME_PICKER);
       }
     });
 
@@ -147,27 +151,27 @@ public final class ActivityAlarmClock extends Activity {
     adapter.requery();
     notifyService.bind();
     notifyService.call(new NotificationServiceBinder.ServiceCallback() {
-      @Override
-      public void run(NotificationServiceInterface service) {
-        int count;
-        try {
-          count = service.firingAlarmCount();
-        } catch (RemoteException e) {
-          return;
-        } finally {
-          handler.post(new Runnable() {
-            @Override
-            public void run() {
-              notifyService.unbind();
+        @Override
+        public void run(NotificationServiceInterface service) {
+            int count;
+            try {
+                count = service.firingAlarmCount();
+            } catch (RemoteException e) {
+                return;
+            } finally {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyService.unbind();
+                    }
+                });
             }
-          });
+            if (count > 0) {
+                Intent notifyActivity = new Intent(getApplicationContext(), ActivityAlarmNotification.class);
+                notifyActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(notifyActivity);
+            }
         }
-        if (count > 0) {
-          Intent notifyActivity = new Intent(getApplicationContext(), ActivityAlarmNotification.class);
-          notifyActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-          startActivity(notifyActivity);
-        }
-      }
     });
   }
 
@@ -202,7 +206,7 @@ public final class ActivityAlarmClock extends Activity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (Menus.values()[item.getItemId()]) {
       case DELETE_ALL:
-        showDialog(Dialogs.DELETE_CONFIRM.ordinal());
+        showDialogFragment(DELETE_CONFIRM);
         break;
       case DEFAULT_ALARM_SETTINGS:
         Intent alarm_settings = new Intent(getApplicationContext(), ActivityAlarmSettings.class);
@@ -218,7 +222,13 @@ public final class ActivityAlarmClock extends Activity {
     return super.onOptionsItemSelected(item);
   }
 
-  private final void redraw() {
+    private void showDialogFragment(int id) {
+        DialogFragment dialog = new ActivityDialogFragment().newInstance(
+                id);
+        dialog.show(getFragmentManager(), "ActivityDialogFragment");
+    }
+
+  private void redraw() {
     // Show/hide debug buttons.
     if (AppSettings.isDebugMode(getApplicationContext())) {
       testBtn.setVisibility(View.VISIBLE);
@@ -240,51 +250,60 @@ public final class ActivityAlarmClock extends Activity {
     clock.setText(time.localizedString(getApplicationContext()));
   }
 
-  @Override
-  protected Dialog onCreateDialog(int id) {
-    switch (Dialogs.values()[id]) {
-      case TIME_PICKER:
-        Dialog picker = new TimePickerDialog(
-            this, getString(R.string.add_alarm), AppSettings.isDebugMode(this),
-            new TimePickerDialog.OnTimeSetListener() {
-              @Override
-              public void onTimeSet(int hourOfDay, int minute, int second) {
-                // When a time is selected, create it via the service and
-                // force the list view to re-query the alarm list. 
-                service.createAlarm(new AlarmTime(hourOfDay, minute, second));
-                adapter.requery();
-                // Destroy this dialog so that it does not save its state.
-                removeDialog(Dialogs.TIME_PICKER.ordinal());
-              }
-            });
-        picker.setOnCancelListener(new OnCancelListener() {
-          @Override
-          public void onCancel(DialogInterface dialog) {
-            removeDialog(Dialogs.TIME_PICKER.ordinal());
+    public static class ActivityDialogFragment extends DialogFragment {
+
+        public ActivityDialogFragment newInstance(int id) {
+            ActivityDialogFragment fragment = new ActivityDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt("id", id);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+          switch (getArguments().getInt("id")) {
+            case ActivityAlarmClock.TIME_PICKER:
+              return  new TimePickerDialog(
+                      getActivity(), getString(R.string.add_alarm),
+                      AppSettings.isDebugMode(getActivity()),
+                      new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(int hourOfDay, int minute, int second) {
+                          // When a time is selected, create it via the service and
+                          // force the list view to re-query the alarm list.
+                          service.createAlarm(new AlarmTime(hourOfDay, minute, second));
+                          adapter.requery();
+                          // Destroy this dialog so that it does not save its state.
+                            dismiss();
+                        }
+                      });
+            case ActivityAlarmClock.DELETE_CONFIRM:
+              final AlertDialog.Builder deleteConfirmBuilder =
+                      new AlertDialog.Builder(getActivity());
+              deleteConfirmBuilder.setTitle(R.string.delete_all);
+              deleteConfirmBuilder.setMessage(R.string.confirm_delete);
+              deleteConfirmBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                  service.deleteAllAlarms();
+                  adapter.requery();
+                    dismiss();
+                }
+              });
+              deleteConfirmBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dismiss();
+                }
+              });
+              return deleteConfirmBuilder.create();
+            default:
+              return super.onCreateDialog(savedInstanceState);
           }
-        });
-        return picker;
-      case DELETE_CONFIRM:
-        final AlertDialog.Builder deleteConfirmBuilder = new AlertDialog.Builder(this);
-        deleteConfirmBuilder.setTitle(R.string.delete_all);
-        deleteConfirmBuilder.setMessage(R.string.confirm_delete);
-        deleteConfirmBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            service.deleteAllAlarms();
-            adapter.requery();
-            dismissDialog(Dialogs.DELETE_CONFIRM.ordinal());
-          }
-        });
-        deleteConfirmBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dismissDialog(Dialogs.DELETE_CONFIRM.ordinal());
-          }
-        });
-        return deleteConfirmBuilder.create();
-      default:
-        return super.onCreateDialog(id);
+        }
+
     }
-  }
+
 }

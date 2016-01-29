@@ -9,5 +9,7 @@
   android:textColor="#000"
   android:gravity="center_vertical"
   android:paddingLeft="14dip"
+  android:paddingStart="14dip"
   android:paddingRight="15dip"
+  android:paddingEnd="15dip"
   android:ellipsize="marquee" />

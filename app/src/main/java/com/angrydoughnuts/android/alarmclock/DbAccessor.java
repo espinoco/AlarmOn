@@ -24,12 +24,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public final class DbAccessor {
-  private DbHelper db;
   private SQLiteDatabase rDb;
   private SQLiteDatabase rwDb;
 
   public DbAccessor(Context context) {
-    db = new DbHelper(context);
+    DbHelper db = new DbHelper(context);
     rwDb = db.getWritableDatabase();
     rDb = db.getReadableDatabase();
   }
@@ -67,7 +66,7 @@ public final class DbAccessor {
   }
 
   public List<Long> getEnabledAlarms() {
-    LinkedList<Long> enabled = new LinkedList<Long>();
+    LinkedList<Long> enabled = new LinkedList<>();
     Cursor cursor = rDb.query(DbHelper.DB_TABLE_ALARMS,
         new String[] { DbHelper.ALARMS_COL__ID },
         DbHelper.ALARMS_COL_ENABLED + " = 1", null, null, null, null);
@@ -80,7 +79,7 @@ public final class DbAccessor {
   }
 
   public List<Long> getAllAlarms() {
-    LinkedList<Long> alarms = new LinkedList<Long>();
+    LinkedList<Long> alarms = new LinkedList<>();
     Cursor cursor = rDb.query(DbHelper.DB_TABLE_ALARMS,
         new String[] { DbHelper.ALARMS_COL__ID },
         null, null, null, null, null);
@@ -98,9 +97,8 @@ public final class DbAccessor {
   }
 
   public Cursor readAlarmInfo() {
-    Cursor cursor = rDb.query(DbHelper.DB_TABLE_ALARMS, AlarmInfo.contentColumns(),
+    return rDb.query(DbHelper.DB_TABLE_ALARMS, AlarmInfo.contentColumns(),
         null, null, null, null, DbHelper.ALARMS_COL_TIME + " ASC");
-    return cursor;
   }
 
   public AlarmInfo readAlarmInfo(long alarmId) {
@@ -124,7 +122,7 @@ public final class DbAccessor {
         new String[] { DbHelper.SETTINGS_COL_ID },
         DbHelper.SETTINGS_COL_ID + " = " + alarmId, null, null, null, null);
 
-    boolean success = false;
+    boolean success;
     if (cursor.getCount() < 1) {
       success = rwDb.insert(DbHelper.DB_TABLE_SETTINGS, null, settings.contentValues(alarmId)) >= 0;
     } else {

@@ -6,13 +6,13 @@
 
   <ListView android:id="@+id/alarm_list"
     android:layout_weight="1"
-    android:paddingLeft="10px"
-    android:paddingRight="10px"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="0dp" />
 
   <TextView android:id="@+id/clock"
-    android:gravity="right"
+    android:gravity="end"
     android:textSize="20sp"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />

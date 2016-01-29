@@ -164,7 +164,7 @@ public class NotificationService extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
-    firingAlarms = new LinkedList<Long>();
+    firingAlarms = new LinkedList<>();
     // Access to in-memory and persistent data structures.
     service = new AlarmClockServiceBinder(getApplicationContext());
     service.bind();
@@ -199,7 +199,7 @@ public class NotificationService extends Service {
         String notifyText;
         try {
           AlarmInfo info = db.readAlarmInfo(currentAlarmId());
-          notifyText = info.getName();
+          notifyText = (info.getName() == null) ? "" : info.getName();
           if (notifyText.equals("")) {
             notifyText = info.getTime().localizedString(getApplicationContext());
           }
@@ -257,20 +257,13 @@ public class NotificationService extends Service {
     }
   }
 
-  // OnStart was depreciated in SDK 5.  It is here for backwards compatibility.
-  // http://android-developers.blogspot.com/2010/02/service-api-changes-starting-with.html
-  @Override
-  public void onStart(Intent intent, int startId) {
-    handleStart(intent, startId);
-  }
-
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    handleStart(intent, startId);
+    handleStart(intent);
     return START_NOT_STICKY;
   }
 
-  private void handleStart(Intent intent, int startId) {
+  private void handleStart(Intent intent) {
     // startService called from alarm receiver with an alarm id url.
     if (intent != null && intent.getData() != null) {
       long alarmId = AlarmUtil.alarmUriToId(intent.getData());

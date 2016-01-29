@@ -36,8 +36,8 @@
         with the time text field. -->
       <Button android:visibility="invisible"
         android:textSize="20sp"
-        android:paddingTop="25px"
-        android:paddingBottom="25px"
+        android:paddingTop="25dp"
+        android:paddingBottom="25dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
       <Button android:id="@+id/picker_am_pm"
@@ -52,5 +52,5 @@
     android:textStyle="italic"
     android:gravity="center"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="0dp" />
 </LinearLayout>

@@ -44,7 +44,7 @@ import android.widget.SimpleCursorAdapter.ViewBinder;
  */
 public class MediaListView extends ListView implements OnItemClickListener {
   public interface OnItemPickListener {
-    public void onItemPick(Uri uri, String name);
+    void onItemPick(Uri uri, String name);
   }
 
   protected static int DEFAULT_TONE_INDEX = -69;
@@ -121,16 +121,11 @@ public class MediaListView extends ListView implements OnItemClickListener {
     cursorManager.startManagingCursor(cursor);
   }
 
-  protected void query(Uri contentUri, String nameColumn,
-      int rowResId, String[] displayColumns, int[] resIDs) {
-    query(contentUri, nameColumn, null, rowResId, displayColumns, resIDs);
-  }
-
   protected void query(Uri contentUri, String nameColumn, String selection,
       int rowResId, String[] displayColumns, int[] resIDs) {
     this.nameColumn = nameColumn;
     final ArrayList<String> queryColumns =
-      new ArrayList<String>(displayColumns.length + 1);
+      new ArrayList<>(displayColumns.length + 1);
     queryColumns.addAll(Arrays.asList(displayColumns));
     // The ID column is required for the SimpleCursorAdapter.  Make sure to
     // add it if it's not already there.

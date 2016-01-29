@@ -2,10 +2,10 @@
 <!-- Translation by Jasper <jvgeem@gmail.com> -->
 <resources>
   <string name="app_name">Alarm Klock</string>
-  <string name="add_alarm">Voeg alarm toe...</string>
-  <string name="default_settings">Standaard Alarm Instellingen...</string>
-  <string name="app_settings">Applicatie Instellingen...</string>
-  <string name="delete_all">Verwijder Alles...</string>
+  <string name="add_alarm">Voeg alarm toe</string>
+  <string name="default_settings">Standaard Alarm Instellingen</string>
+  <string name="app_settings">Applicatie Instellingen</string>
+  <string name="delete_all">Verwijder Alles</string>
   <string name="settings">Instellingen</string>
   <string name="time">Tijd</string>
   <string name="label">Omschrijving</string>
@@ -27,7 +27,7 @@
   <string name="volume_duration">Wegvaag tijd (seconden)</string>
   <string name="ok">OK</string>
   <string name="cancel">Herstel</string>
-  <string name="delete">Verwijder...</string>
+  <string name="delete">Verwijder</string>
   <string name="confirm_delete">Verwijderen?</string>
   <string name="snooze">SNOOZE</string>
   <string name="dismiss">ANNULEREN</string>
@@ -75,7 +75,7 @@
   <string name="lock_screen_countdown">Aftellen</string>
   <string name="lock_screen_time">Alarm tijd</string>
   <string name="lock_screen_both">Beide</string>
-  <string name="lock_screen_custom">Uitzondering...</string>
+  <string name="lock_screen_custom">Uitzondering</string>
   <string name="lock_screen_nothing">Geen</string>
   <string name="internal">Intern</string>
   <string name="artists">Artiest</string>

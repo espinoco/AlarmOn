@@ -74,7 +74,9 @@ public final class ActivityAlarmNotification extends Activity {
             try {
               TextView volume = (TextView) findViewById(R.id.volume);
               volume.setText("Volume: " + service.volume());
-            } catch (RemoteException e) {}
+            } catch (RemoteException e) {
+              e.printStackTrace();
+            }
 
             long next = AlarmUtil.millisTillNextInterval(AlarmUtil.Interval.SECOND);
             handler.postDelayed(timeTick, next);

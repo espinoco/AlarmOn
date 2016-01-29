@@ -29,23 +29,23 @@
 
   <com.angrydoughnuts.android.alarmclock.MediaSongsView
     android:id="@+id/media_picker_internal"
-    android:dividerHeight="2px"
+    android:dividerHeight="2dp"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
 
   <ViewFlipper android:id="@+id/media_picker_artists"
-    android:dividerHeight="2px"
+    android:dividerHeight="2dp"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
 
   <ViewFlipper android:id="@+id/media_picker_albums"
-    android:dividerHeight="2px"
+    android:dividerHeight="2dp"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
 
   <com.angrydoughnuts.android.alarmclock.MediaSongsView
     android:id="@+id/media_picker_songs"
-    android:dividerHeight="2px"
+    android:dividerHeight="2dp"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"/>
 </FrameLayout>

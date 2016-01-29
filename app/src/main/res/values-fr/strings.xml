@@ -2,10 +2,10 @@
 <!-- Translation by Biljana Milicevic <engr3337@gmail.com> -->
 <resources>
   <string name="app_name">Alarm Klock</string>
-  <string name="add_alarm">Ajouter un alarme...</string>
-  <string name="default_settings">Paramètres par défaut d\'alarme...</string>
-  <string name="app_settings">Paramètres de l\'application...</string>
-  <string name="delete_all">Supprimer tout...</string>
+  <string name="add_alarm">Ajouter un alarme</string>
+  <string name="default_settings">Paramètres par défaut d\'alarme</string>
+  <string name="app_settings">Paramètres de l\'application</string>
+  <string name="delete_all">Supprimer tout</string>
   <string name="settings">Paramètres</string>
   <string name="time">Temps</string>
   <string name="label">Etiquette</string>
@@ -27,7 +27,7 @@
   <string name="volume_duration">Durée de la modulation  (secondes)</string>
   <string name="ok">OK</string>
   <string name="cancel">Annuler</string>
-  <string name="delete">Supprimer...</string>
+  <string name="delete">Supprimer</string>
   <string name="confirm_delete">Confirmer la suppression?</string>
   <string name="snooze">EN VEILLE</string>
   <string name="dismiss">REVOQUER</string>
@@ -75,7 +75,7 @@
   <string name="lock_screen_countdown">Compte à rebours</string>
   <string name="lock_screen_time">Heure de l\'alarme</string>
   <string name="lock_screen_both">Les deux</string>
-  <string name="lock_screen_custom">Personnalisé...</string>
+  <string name="lock_screen_custom">Personnalisé</string>
   <string name="lock_screen_nothing">Rien</string>
   <string name="internal">Interne</string>
   <string name="artists">Artistes</string>

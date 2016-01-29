@@ -22,6 +22,7 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * An exception handler that writes the stact trace to a file on the
@@ -42,7 +43,8 @@ public final class LoggingUncaughtExceptionHandler implements UncaughtExceptionH
   @Override
   public void uncaughtException(Thread thread, Throwable ex) {
     try {
-      String timestamp = new SimpleDateFormat("yyyyMMdd_kkmmss.SSSS").format(Calendar.getInstance().getTime());
+      String timestamp = new SimpleDateFormat("yyyyMMdd_kkmmss.SSSS", Locale.US)
+              .format(Calendar.getInstance().getTime());
       String filename = timestamp + "-alarmclock.txt";
 
       Writer stacktrace = new StringWriter();

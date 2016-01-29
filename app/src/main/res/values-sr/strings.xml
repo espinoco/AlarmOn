@@ -2,10 +2,10 @@
 <!-- Translation by Ilija Milicevic <engr3337@gmail.com> -->
 <resources>
   <string name="app_name">Аларм Клоцк</string>
-  <string name="add_alarm">Нови будилник...</string>
-  <string name="default_settings">Стандардне Опције за Будилнике...</string>
-  <string name="app_settings">Подешавање Апликације...</string>
-  <string name="delete_all">Бриши Све...</string>
+  <string name="add_alarm">Нови будилник</string>
+  <string name="default_settings">Стандардне Опције за Будилнике</string>
+  <string name="app_settings">Подешавање Апликације</string>
+  <string name="delete_all">Бриши Све</string>
   <string name="settings">Опције</string>
   <string name="time">Време</string>
   <string name="label">Ознака</string>
@@ -27,7 +27,7 @@
   <string name="volume_duration">Време утишавања (у секундама)</string>
   <string name="ok">У Реду</string>
   <string name="cancel">Поништити</string>
-  <string name="delete">Обрисати...</string>
+  <string name="delete">Обрисати</string>
   <string name="confirm_delete">Потврди брисање?</string>
   <string name="snooze">ДРЕМАЊЕ</string>
   <string name="dismiss">ОТКАЖИ</string>
@@ -75,7 +75,7 @@
   <string name="lock_screen_countdown">Одбројавање</string>
   <string name="lock_screen_time">Време буђења</string>
   <string name="lock_screen_both">Обоје</string>
-  <string name="lock_screen_custom">Одреди...</string>
+  <string name="lock_screen_custom">Одреди</string>
   <string name="lock_screen_nothing">Ништа</string>
   <string name="internal">Интерни</string>
   <string name="artists">Уметници</string>

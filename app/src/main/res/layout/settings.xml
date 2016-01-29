@@ -17,19 +17,21 @@
   <ListView android:id="@+id/settings_list"
     android:layout_weight="1"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="0dp" />
 
   <LinearLayout android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
     <Button android:text="@string/ok"
+      style="?android:attr/buttonBarButtonStyle"
       android:id="@+id/settings_ok"
       android:layout_weight="1"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content" />
 
     <Button android:text="@string/cancel"
+      style="?android:attr/buttonBarButtonStyle"
       android:id="@+id/settings_cancel"
       android:layout_weight="1"
       android:layout_width="wrap_content"

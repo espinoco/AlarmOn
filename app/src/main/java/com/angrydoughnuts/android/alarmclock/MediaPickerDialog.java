@@ -19,7 +19,6 @@ import com.angrydoughnuts.android.alarmclock.MediaListView.OnItemPickListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -27,7 +26,6 @@ import android.os.Message;
 import android.provider.MediaStore.Audio.Albums;
 import android.provider.MediaStore.Audio.Artists;
 import android.provider.MediaStore.Audio.Media;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -43,13 +41,11 @@ import android.widget.TabHost.OnTabChangeListener;
  */
 public class MediaPickerDialog extends AlertDialog {
   public interface OnMediaPickListener {
-    public void onMediaPick(String name, Uri media);
+    void onMediaPick(String name, Uri media);
   }
 
-  private final String INTERNAL_TAB = "internal";
   private final String ARTISTS_TAB = "artists";
   private final String ALBUMS_TAB = "albums";
-  private final String ALL_SONGS_TAB = "songs";
 
   private String selectedName;
   private Uri selectedUri;
@@ -60,13 +56,15 @@ public class MediaPickerDialog extends AlertDialog {
     super(context);
     mediaPlayer = new MediaPlayer();
 
-    final LayoutInflater inflater =
-      (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    final View body_view = inflater.inflate(R.layout.media_picker_dialog, null);
+    final View body_view = View.inflate(context, R.layout.media_picker_dialog,
+            null);
     setView(body_view);
 
     TabHost tabs = (TabHost) body_view.findViewById(R.id.media_tabs);
     tabs.setup();
+
+    final String INTERNAL_TAB = "internal";
+    final String ALL_SONGS_TAB = "songs";
 
     tabs.addTab(tabs.newTabSpec(INTERNAL_TAB).setContent(R.id.media_picker_internal).setIndicator(context.getString(R.string.internal)));
     tabs.addTab(tabs.newTabSpec(ARTISTS_TAB).setContent(R.id.media_picker_artists).setIndicator(context.getString(R.string.artists)));
@@ -166,19 +164,7 @@ public class MediaPickerDialog extends AlertDialog {
   // Make these no-ops and final so the buttons can't be overridden buy the
   // user nor a child.
   @Override
-  public void setButton(CharSequence text, Message msg) {  }
-  @Override
-  public final void setButton(CharSequence text, OnClickListener listener) {}
-  @Override
   public final void setButton(int whichButton, CharSequence text, Message msg) {}
   @Override
   public final void setButton(int whichButton, CharSequence text, OnClickListener listener) {}
-  @Override
-  public final void setButton2(CharSequence text, Message msg) {}
-  @Override
-  public final void setButton2(CharSequence text, OnClickListener listener) {}
-  @Override
-  public final void setButton3(CharSequence text, Message msg) {}
-  @Override
-  public final void setButton3(CharSequence text, OnClickListener listener) {}
 }

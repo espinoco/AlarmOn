@@ -17,6 +17,7 @@ package com.angrydoughnuts.android.alarmclock;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -36,7 +38,8 @@ import android.widget.EditText;
  * that make up the global application settings.
  */
 public class ActivityAppSettings extends PreferenceActivity {
-  private enum Dialogs { CUSTOM_LOCK_SCREEN }
+
+  private static final int CUSTOM_LOCK_SCREEN = 0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,9 @@ public class ActivityAppSettings extends PreferenceActivity {
 
           final String custom_lock_screen = getResources().getStringArray(R.array.lock_screen_values)[4];
           if (newValue.equals(custom_lock_screen)) {
-            showDialog(Dialogs.CUSTOM_LOCK_SCREEN.ordinal());
+              DialogFragment dialog = new ActivityDialogFragment().newInstance(
+                      CUSTOM_LOCK_SCREEN);
+              dialog.show(getFragmentManager(), "ActivityDialogFragment");
           }
         }
 
@@ -70,41 +75,57 @@ public class ActivityAppSettings extends PreferenceActivity {
     lock_screen.setOnPreferenceChangeListener(refreshListener);
   }
 
-  @Override
-  protected Dialog onCreateDialog(int id) {
-    switch (Dialogs.values()[id]) {
-      case CUSTOM_LOCK_SCREEN:
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        final View lockTextView = getLayoutInflater().inflate(R.layout.custom_lock_screen_dialog, null);
-        final EditText editText = (EditText) lockTextView.findViewById(R.id.custom_lock_screen_text);
-        editText.setText(prefs.getString(AppSettings.CUSTOM_LOCK_SCREEN_TEXT, ""));
-        final CheckBox persistentCheck = (CheckBox) lockTextView.findViewById(R.id.custom_lock_screen_persistent);
-        persistentCheck.setChecked(prefs.getBoolean(AppSettings.CUSTOM_LOCK_SCREEN_PERSISTENT, false));
-        final AlertDialog.Builder lockTextBuilder = new AlertDialog.Builder(this);
-        lockTextBuilder.setTitle(R.string.custom_lock_screen_text);
-        lockTextBuilder.setView(lockTextView);
-        lockTextBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            Editor editor = prefs.edit();
-            editor.putString(AppSettings.CUSTOM_LOCK_SCREEN_TEXT, editText.getText().toString());
-            editor.putBoolean(AppSettings.CUSTOM_LOCK_SCREEN_PERSISTENT, persistentCheck.isChecked());
-            editor.commit();
-            final Intent causeRefresh = new Intent(getApplicationContext(), AlarmClockService.class);
-            causeRefresh.putExtra(AlarmClockService.COMMAND_EXTRA, AlarmClockService.COMMAND_NOTIFICATION_REFRESH);
-            startService(causeRefresh);
-            dismissDialog(Dialogs.CUSTOM_LOCK_SCREEN.ordinal());
-          }
-        });
-        lockTextBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dismissDialog(Dialogs.CUSTOM_LOCK_SCREEN.ordinal());
-          }
-        });
-        return lockTextBuilder.create();
-      default:
-        return super.onCreateDialog(id);
+  public static class ActivityDialogFragment extends DialogFragment {
+
+    public ActivityDialogFragment newInstance(int id) {
+      ActivityDialogFragment fragment = new ActivityDialogFragment();
+      Bundle args = new Bundle();
+      args.putInt("id", id);
+      fragment.setArguments(args);
+      return fragment;
     }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+      switch (getArguments().getInt("id")) {
+          case CUSTOM_LOCK_SCREEN:
+              final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+              final View lockTextView = View.inflate(getActivity(),
+                      R.layout.custom_lock_screen_dialog, null);
+              final EditText editText = (EditText) lockTextView.findViewById(R.id.custom_lock_screen_text);
+              editText.setText(prefs.getString(AppSettings.CUSTOM_LOCK_SCREEN_TEXT, ""));
+              final CheckBox persistentCheck = (CheckBox) lockTextView.findViewById(R.id.custom_lock_screen_persistent);
+              persistentCheck.setChecked(prefs.getBoolean(AppSettings.CUSTOM_LOCK_SCREEN_PERSISTENT, false));
+              final AlertDialog.Builder lockTextBuilder = new AlertDialog.Builder(getActivity());
+              lockTextBuilder.setTitle(R.string.custom_lock_screen_text);
+              lockTextBuilder.setView(lockTextView);
+              lockTextBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      Editor editor = prefs.edit();
+                      editor.putString(AppSettings.CUSTOM_LOCK_SCREEN_TEXT, editText.getText().toString());
+                      editor.putBoolean(AppSettings.CUSTOM_LOCK_SCREEN_PERSISTENT, persistentCheck.isChecked());
+                      editor.apply();
+                      final Intent causeRefresh = new Intent(getActivity(),
+                              AlarmClockService.class);
+                      causeRefresh.putExtra(AlarmClockService.COMMAND_EXTRA,
+                              AlarmClockService.COMMAND_NOTIFICATION_REFRESH);
+                      getActivity().startService(causeRefresh);
+                      dismiss();
+                  }
+              });
+              lockTextBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      dismiss();
+                  }
+              });
+              return lockTextBuilder.create();
+        default:
+          return super.onCreateDialog(savedInstanceState);
+      }
+    }
+
   }
 }

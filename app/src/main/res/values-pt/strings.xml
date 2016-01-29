@@ -2,10 +2,10 @@
 <!-- Translation by Thiago Elias <thi747@gmail.com> -->
 <resources>
   <string name="app_name">Alarm Klock</string>
-  <string name="add_alarm">Adicionar alarme...</string>
-  <string name="default_settings">Configurações Padrões de Alarme...</string>
-  <string name="app_settings">Configurações de Aplicação...</string>
-  <string name="delete_all">Excluir Tudo...</string>
+  <string name="add_alarm">Adicionar alarme</string>
+  <string name="default_settings">Configurações Padrões de Alarme</string>
+  <string name="app_settings">Configurações de Aplicação</string>
+  <string name="delete_all">Excluir Tudo</string>
   <string name="settings">Configurações</string>
   <string name="time">Hora</string>
   <string name="label">Nome</string>
@@ -27,7 +27,7 @@
   <string name="volume_duration">Duração do crescimento (segundos)</string>
   <string name="ok">OK</string>
   <string name="cancel">Cancelar</string>
-  <string name="delete">Excluir...</string>
+  <string name="delete">Excluir</string>
   <string name="confirm_delete">Confirma exclusão?</string>
   <string name="snooze">SONECA</string>
   <string name="dismiss">DISPENSAR</string>
@@ -75,7 +75,7 @@
   <string name="lock_screen_countdown">Regressiva</string>
   <string name="lock_screen_time">Hora do alarme</string>
   <string name="lock_screen_both">Ambos</string>
-  <string name="lock_screen_custom">Personalizado...</string>
+  <string name="lock_screen_custom">Personalizado</string>
   <string name="lock_screen_nothing">Nada</string>
   <string name="internal">Interno</string>
   <string name="artists">Artistas</string>

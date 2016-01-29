@@ -37,7 +37,7 @@ public class AlarmClockServiceBinder {
 
   public AlarmClockServiceBinder(Context context) {
     this.context = context;
-    this.callbacks = new LinkedList<ServiceCallback>();
+    this.callbacks = new LinkedList<>();
   }
 
   public AlarmClockInterface clock() {
@@ -141,15 +141,6 @@ public class AlarmClockServiceBinder {
       @Override
       public void run() throws RemoteException {
         clock.acknowledgeAlarm(alarmId);
-      }
-    });
-  }
-
-  public void snoozeAlarm(final long alarmId) {
-    runOrDefer(new ServiceCallback() {
-      @Override
-      public void run() throws RemoteException {
-        clock.snoozeAlarm(alarmId);
       }
     });
   }

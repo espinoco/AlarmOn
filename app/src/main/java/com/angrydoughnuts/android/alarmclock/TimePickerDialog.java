@@ -25,7 +25,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Handler;
 import android.text.format.DateFormat;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewStub;
@@ -43,7 +42,7 @@ import android.widget.TextView.OnEditorActionListener;
  */
 public final class TimePickerDialog extends AlertDialog {
   public interface OnTimeSetListener {
-    public void onTimeSet(int hourOfDay, int minute, int second);
+    void onTimeSet(int hourOfDay, int minute, int second);
   }
 
   private static final String PICKER_PREFS = "TimePickerPreferences";
@@ -60,7 +59,7 @@ public final class TimePickerDialog extends AlertDialog {
 
   /**
    * Construct a time picker with the supplied hour minute and second.
-   * @param context
+   * @param context Context
    * @param title Dialog title.
    * @param hourOfDay 0 to 23.
    * @param minute  0 to 60.
@@ -85,7 +84,7 @@ public final class TimePickerDialog extends AlertDialog {
 
   /**
    * Construct a time picker with 'now' as the starting time.
-   * @param context
+   * @param context Context
    * @param title Dialog title.
    * @param showSeconds Show/hid the seconds field.
    * @param setListener Callback for when the user selects 'OK'.
@@ -132,9 +131,8 @@ public final class TimePickerDialog extends AlertDialog {
     }
 
     // Set the view for the body section of the AlertDialog.
-    final LayoutInflater inflater =
-      (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    final View body_view = inflater.inflate(R.layout.time_picker_dialog, null);
+    final View body_view = View.inflate(context, R.layout.time_picker_dialog,
+            null);
     setView(body_view);
 
     // Setup each of the components of the body section.
@@ -215,8 +213,8 @@ public final class TimePickerDialog extends AlertDialog {
     /**
      * Construct a numeric picker for the supplied calendar field and formats
      * it according to the supplied format string.
-     * @param calendarField
-     * @param formatString
+     * @param calendarField Calendar field
+     * @param formatString Format string
      */
     public PickerView(int calendarField, String formatString) {
       this.calendarField = calendarField;
@@ -225,10 +223,10 @@ public final class TimePickerDialog extends AlertDialog {
 
     /**
      * Inflates the ViewStub for this numeric picker.
-     * @param parentView
-     * @param resourceId
-     * @param showIncrement
-     * @param defaultIncrement
+     * @param parentView Parent view
+     * @param resourceId Resource
+     * @param showIncrement Show increment
+     * @param defaultIncrement Default increment
      */
     public void inflate(View parentView, int resourceId, boolean showIncrement, IncrementValue defaultIncrement) {
       final ViewStub stub = (ViewStub) parentView.findViewById(resourceId);
@@ -246,7 +244,7 @@ public final class TimePickerDialog extends AlertDialog {
           increment.cycleToNext();
           Editor editor = prefs.edit();
           editor.putInt(INCREMENT_PREF, increment.value.ordinal());
-          editor.commit();
+          editor.apply();
           pickerRefresh();
         }
       });
@@ -271,17 +269,30 @@ public final class TimePickerDialog extends AlertDialog {
       pickerRefresh();
     }
 
-    public void pickerRefresh() {
-      int fieldValue = calendar.get(calendarField);
-      if (calendarField == Calendar.HOUR && fieldValue == 0) {
-        fieldValue = 12;
+      public void pickerRefresh() {
+          int fieldValue = calendar.get(calendarField);
+
+          if (calendarField == Calendar.HOUR && fieldValue == 0) {
+              fieldValue = 12;
+          }
+
+          text.setText(String.format(formatString, fieldValue));
+
+          String incrementValueButtonText = "+/- "
+                  + increment.nextValue().value();
+
+          incrementValueButton.setText(incrementValueButtonText);
+
+          String plusText = "+" + increment.value();
+
+          plus.setText(plusText);
+
+          String minusText = "-" + increment.value();
+
+          minus.setText(minusText);
+
+          dialogRefresh();
       }
-      text.setText(String.format(formatString, fieldValue));
-      incrementValueButton.setText("+/- " + increment.nextValue().value());
-      plus.setText("+" + increment.value());
-      minus.setText("-" + increment.value());
-      dialogRefresh();
-    }
 
     private final class Increment {
       private IncrementValue value;
@@ -387,7 +398,9 @@ public final class TimePickerDialog extends AlertDialog {
           } else {
             calendar.set(calendarField, newValue);
           }
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+          e.printStackTrace();
+        }
         pickerRefresh();
       }
       @Override

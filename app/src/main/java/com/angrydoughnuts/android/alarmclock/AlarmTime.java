@@ -17,12 +17,14 @@ package com.angrydoughnuts.android.alarmclock;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import com.angrydoughnuts.android.alarmclock.Week.Day;
 
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.text.format.DateFormat;
 
 /**
@@ -39,7 +41,7 @@ public final class AlarmTime implements Parcelable, Comparable<AlarmTime> {
 
   /**
    * Copy constructor.
-   * @param rhs
+   * @param rhs rhs
    */
   public AlarmTime(AlarmTime rhs) {
     calendar = (Calendar) rhs.calendar.clone();
@@ -49,9 +51,9 @@ public final class AlarmTime implements Parcelable, Comparable<AlarmTime> {
   /**
    * Construct an AlarmTime for the next occurrence of this hour/minute/second.
    * It will not repeat.
-   * @param hourOfDay
-   * @param minute
-   * @param second
+   * @param hourOfDay Hour of day
+   * @param minute Minute
+   * @param second Second
    */
   public AlarmTime(int hourOfDay, int minute, int second) {
     this(hourOfDay, minute, second, new Week());
@@ -60,10 +62,10 @@ public final class AlarmTime implements Parcelable, Comparable<AlarmTime> {
   /**
    * Construct an AlarmTime for the next occurrence of this hour/minute/second
    * which occurs on the specified days of the week.
-   * @param hourOfDay
-   * @param minute
-   * @param second
-   * @param daysOfWeek
+   * @param hourOfDay Hour of day
+   * @param minute minute
+   * @param second second
+   * @param daysOfWeek Days of week
    */
   public AlarmTime(int hourOfDay, int minute, int second, Week daysOfWeek) {
     this.calendar = Calendar.getInstance();
@@ -105,7 +107,7 @@ public final class AlarmTime implements Parcelable, Comparable<AlarmTime> {
   }
 
   @Override
-  public int compareTo(AlarmTime another) {
+  public int compareTo(@NonNull AlarmTime another) {
     return calendar.compareTo(another.calendar);
   }
 
@@ -115,20 +117,19 @@ public final class AlarmTime implements Parcelable, Comparable<AlarmTime> {
       return false;
     }
     AlarmTime rhs = (AlarmTime) o;
-    if (!calendar.equals(rhs.calendar)) {
-      return false;
-    }
-    return this.daysOfWeek.equals(rhs.daysOfWeek);
+
+    return calendar.equals(rhs.calendar) && this.daysOfWeek.equals(rhs.daysOfWeek);
   }
 
   public String toString() {
-    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm.ss MMMM dd yyyy");
+    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm.ss MMMM dd yyyy",
+            Locale.US);
     return formatter.format(calendar.getTimeInMillis());
   }
 
   public String localizedString(Context context) {
     boolean is24HourFormat = DateFormat.is24HourFormat(context);
-    String format = "";
+    String format;
     String second = "";
     if (AppSettings.isDebugMode(context)) {
       second = ".ss";
@@ -139,7 +140,7 @@ public final class AlarmTime implements Parcelable, Comparable<AlarmTime> {
       format = "h:mm" + second + " aaa";
     }
 
-    SimpleDateFormat formatter = new SimpleDateFormat(format);
+    SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.US);
     return formatter.format(calendar.getTime());
   }
 
@@ -191,8 +192,8 @@ public final class AlarmTime implements Parcelable, Comparable<AlarmTime> {
    * A static method which generates an AlarmTime object @minutes in the future.
    * It first truncates seconds (rounds down to the nearest minute) before
    * adding @minutes
-   * @param minutes
-   * @return
+   * @param minutes Minutes
+   * @return AlarmTime
    */
   public static AlarmTime snoozeInMillisUTC(int minutes) {
     Calendar snooze = Calendar.getInstance();

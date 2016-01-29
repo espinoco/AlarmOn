@@ -38,8 +38,8 @@ public final class PendingAlarmList {
   private Context context;
 
   public PendingAlarmList(Context context) {
-    pendingAlarms = new TreeMap<Long, PendingAlarm>();
-    alarmTimes = new TreeMap<AlarmTime, Long>();
+    pendingAlarms = new TreeMap<>();
+    alarmTimes = new TreeMap<>();
     alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     this.context = context;
   }

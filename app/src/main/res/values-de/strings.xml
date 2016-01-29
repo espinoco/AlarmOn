@@ -2,10 +2,10 @@
 <!-- Translation by Sebastian Dörner <sdoerner@st.ovgu.de> -->
 <resources>
   <string name="app_name">Alarm Klock</string>
-  <string name="add_alarm">Weckzeit hinzufügen...</string>
-  <string name="default_settings">Vorgegebene Weckeinstellungen...</string>
-  <string name="app_settings">Anwendungseinstellungen...</string>
-  <string name="delete_all">Alle löschen...</string>
+  <string name="add_alarm">Weckzeit hinzufügen</string>
+  <string name="default_settings">Vorgegebene Weckeinstellungen</string>
+  <string name="app_settings">Anwendungseinstellungen</string>
+  <string name="delete_all">Alle löschen</string>
   <string name="settings">Einstellungen</string>
   <string name="time">Zeit</string>
   <string name="label">Bezeichnung</string>
@@ -27,7 +27,7 @@
   <string name="volume_duration">Anstiegsdauer (Sekunden)</string>
   <string name="ok">OK</string>
   <string name="cancel">Abbrechen</string>
-  <string name="delete">Löschen...</string>
+  <string name="delete">Löschen</string>
   <string name="confirm_delete">Löschen bestätigen?</string>
   <string name="snooze">SNOOZE</string>
   <string name="dismiss">AUSSCHALTEN</string>
@@ -75,7 +75,7 @@
   <string name="lock_screen_countdown">Countdown</string>
   <string name="lock_screen_time">Weckzeit</string>
   <string name="lock_screen_both">Beides</string>
-  <string name="lock_screen_custom">Benutzerdefiniert...</string>
+  <string name="lock_screen_custom">Benutzerdefiniert</string>
   <string name="lock_screen_nothing">Nichts</string>
   <string name="internal">System</string>
   <string name="artists">Interpreten</string>

@@ -2,17 +2,17 @@
 <!-- Translation by Ilija Milicevic <engr3337@gmail.com> -->
 <resources>
   <string name="app_name">Alarm Klock</string>
-  <string name="add_alarm">Agregar alarma...</string>
-  <string name="default_settings">Opciones de alarma por defecto...</string>
-  <string name="app_settings">Ajuste de aplicaciones...</string>
-  <string name="delete_all">Borrar todo...</string>
+  <string name="add_alarm">Agregar alarma</string>
+  <string name="default_settings">Opciones de alarma por defecto</string>
+  <string name="app_settings">Ajuste de aplicaciones</string>
+  <string name="delete_all">Borrar todo</string>
   <string name="settings">Ajustes</string>
   <string name="time">Hora</string>
   <string name="label">Nombre</string>
   <string name="alarm_label">Nombre de alarma</string>
   <string name="none">Ninguno</string>
   <string name="repeat">Repetir</string>
-  <string name="scheduled_days">Agendar dias</string>
+  <string name="scheduled_days">Agendar días</string>
   <string name="tone">Tono</string>
   <string name="alarm_tone">Tono de alarma</string>
   <string name="snooze_minutes">Snooze (minutes)</string>
@@ -27,7 +27,7 @@
   <string name="volume_duration">Duracion de alarma en aumento (segundos)</string>
   <string name="ok">OK</string>
   <string name="cancel">Cancelar</string>
-  <string name="delete">Borrar...</string>
+  <string name="delete">Borrar</string>
   <string name="confirm_delete">Confirma borrado?</string>
   <string name="snooze">SNOOZE</string>
   <string name="dismiss">DESCARTAR</string>
@@ -36,8 +36,8 @@
   <string name="next_alarm">Proxima alarma:</string>
   <string name="no_pending_alarms">No hay alarmas pendientes</string>
   <string name="alarm_has_occurred">La alarma se ha producido</string>
-  <string name="day">%d dia</string>
-  <string name="days">%d dias</string>
+  <string name="day">%d día</string>
+  <string name="days">%d días</string>
   <string name="hour">%d hora</string>
   <string name="hours">%d horas</string>
   <string name="minute">%d minuto</string>
@@ -59,8 +59,8 @@
   <string name="dow_fri">Viernes</string>
   <string name="dow_sat">Sabado</string>
   <string name="no_repeats">Sin repeticiones</string>
-  <string name="everyday">Todos los dias</string>
-  <string name="weekdays">Dias de la semana</string>
+  <string name="everyday">Todos los días</string>
+  <string name="weekdays">Días de la semana</string>
   <string name="weekends">Fines de semana</string>
   <string name="debug_mode_title">Modo de depuracion</string>
   <string name="debug_mode_summary">Encender varias opciones de depuracion</string>
@@ -75,7 +75,7 @@
   <string name="lock_screen_countdown">Cuenta regresiva</string>
   <string name="lock_screen_time">Hora de alarma</string>
   <string name="lock_screen_both">Ambos</string>
-  <string name="lock_screen_custom">Personalizado...</string>
+  <string name="lock_screen_custom">Personalizado</string>
   <string name="lock_screen_nothing">Nada</string>
   <string name="internal">Internos</string>
   <string name="artists">Artistas</string>
@@ -87,5 +87,5 @@
   <string name="custom_lock_screen_persistent">Persistente</string>
   <string name="time_out_title">Apagado de alarma</string>
   <string name="time_out_error">ADVERTENCIA: Esta alarma ha agotado su tiempo de espera y ha sido desactivada.</string>
-  <string name="time_out_summary">La alarma sera automaticamente descartarda luego de estos minutos.</string>
+  <string name="time_out_summary">La alarma será automaticamente descartarda luego de estos minutos.</string>
 </resources>

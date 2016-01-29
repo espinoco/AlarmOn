@@ -146,11 +146,7 @@ public class Slider extends ViewGroup {
   private boolean isComplete() {
     double dotCenterY = dot.getLeft() + dot.getMeasuredWidth()/2.0;
     float progressPercent = (float)(dotCenterY - getLeft()) / (float)(getRight() - getLeft());
-    if (progressPercent > PERCENT_REQUIRED) {
-      return true;
-    } else {
-      return false;
-    }
+    return progressPercent > PERCENT_REQUIRED;
   }
 
   private void finishSlider() {

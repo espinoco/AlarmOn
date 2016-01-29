@@ -11,7 +11,10 @@
     android:layout_height="wrap_content" />
 
   <TextView android:id="@+id/setting_value"
-    android:paddingLeft="6px"
+    android:paddingLeft="6dp"
+    android:paddingRight="0dp"
+    android:paddingEnd="0dp"
+    android:paddingStart="6dp"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
 </LinearLayout>

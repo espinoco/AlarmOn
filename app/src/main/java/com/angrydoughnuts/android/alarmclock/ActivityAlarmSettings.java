@@ -10,7 +10,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  ****************************************************************************/
 
 package com.angrydoughnuts.android.alarmclock;
@@ -24,11 +24,13 @@ import com.angrydoughnuts.android.alarmclock.MediaPickerDialog.OnMediaPickListen
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +59,7 @@ import android.widget.AdapterView.OnItemClickListener;
  */
 public final class ActivityAlarmSettings extends Activity {
   public static final String EXTRAS_ALARM_ID = "alarm_id";
-  private final int MISSING_EXTRAS = -69;
+  private static final int MISSING_EXTRAS = -69;
 
   private enum SettingType {
     TIME,
@@ -65,27 +67,25 @@ public final class ActivityAlarmSettings extends Activity {
     DAYS_OF_WEEK,
     TONE, SNOOZE,
     VIBRATE,
-    VOLUME_FADE;
+    VOLUME_FADE
   }
 
-  private enum Dialogs {
-    TIME_PICKER,
-    NAME_PICKER,
-    DOW_PICKER,
-    TONE_PICKER,
-    SNOOZE_PICKER,
-    VOLUME_FADE_PICKER,
-    DELETE_CONFIRM
-  }
+    public static final int TIME_PICKER = 0;
+    public static final int NAME_PICKER = 1;
+    public static final int DOW_PICKER = 2;
+    public static final int TONE_PICKER = 3;
+    public static final int SNOOZE_PICKER = 4;
+    public static final int VOLUME_FADE_PICKER = 5;
+    public static final int DELETE_CONFIRM = 6;
 
-  private long alarmId;
-  private AlarmClockServiceBinder service;
+  private static long alarmId;
+  private static AlarmClockServiceBinder service;
   private DbAccessor db;
   private AlarmInfo originalInfo;
-  private AlarmInfo info;
-  private AlarmSettings originalSettings;
-  private AlarmSettings settings;
-  SettingsAdapter settingsAdapter;
+  private static AlarmInfo info;
+  private static AlarmSettings originalSettings;
+  private static AlarmSettings settings;
+  static SettingsAdapter settingsAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -153,14 +153,14 @@ public final class ActivityAlarmSettings extends Activity {
     deleteButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        showDialog(Dialogs.DELETE_CONFIRM.ordinal());
+        showDialogFragment(DELETE_CONFIRM);
       }
     });
 
     // Setup the list of settings.  Each setting is represented by a Setting
     // object.  Create one here for each setting type.
     final ArrayList<Setting> settingsObjects =
-      new ArrayList<Setting>(SettingType.values().length);
+      new ArrayList<>(SettingType.values().length);
     // Only display AlarmInfo if the user is editing an actual alarm (as
     // opposed to the default application settings).
     if (alarmId != AlarmSettings.DEFAULT_SETTINGS_ID) {
@@ -238,7 +238,7 @@ public final class ActivityAlarmSettings extends Activity {
       @Override
       public SettingType type() { return SettingType.VOLUME_FADE; }
     });
-    
+
     final ListView settingsList = (ListView) findViewById(R.id.settings_list);
     settingsAdapter = new SettingsAdapter(getApplicationContext(), settingsObjects);
     settingsList.setAdapter(settingsAdapter);
@@ -268,164 +268,6 @@ public final class ActivityAlarmSettings extends Activity {
     db.closeConnections();
   }
 
-  @Override
-  protected Dialog onCreateDialog(int id) {
-    switch (Dialogs.values()[id]) {
-      case TIME_PICKER:
-        final AlarmTime time = info.getTime();
-        int hour = time.calendar().get(Calendar.HOUR_OF_DAY);
-        int minute = time.calendar().get(Calendar.MINUTE);
-        int second = time.calendar().get(Calendar.SECOND);
-        return new TimePickerDialog(this, getString(R.string.time),
-            hour, minute, second, AppSettings.isDebugMode(this),
-            new TimePickerDialog.OnTimeSetListener() {
-              @Override
-              public void onTimeSet(int hourOfDay, int minute, int second) {
-                info.setTime(new AlarmTime(hourOfDay, minute, second, time.getDaysOfWeek()));
-                settingsAdapter.notifyDataSetChanged();
-                // Destroy this dialog so that it does not save its state.
-                removeDialog(Dialogs.TIME_PICKER.ordinal());
-              }
-            });
-
-      case NAME_PICKER:
-        final View nameView = getLayoutInflater().inflate(R.layout.name_settings_dialog, null);
-        final TextView label = (TextView) nameView.findViewById(R.id.name_label);
-        label.setText(info.getName());
-        final AlertDialog.Builder nameBuilder = new AlertDialog.Builder(this);
-        nameBuilder.setTitle(R.string.alarm_label);
-        nameBuilder.setView(nameView);
-        nameBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            info.setName(label.getEditableText().toString());
-            settingsAdapter.notifyDataSetChanged();
-            dismissDialog(Dialogs.NAME_PICKER.ordinal());
-          }
-        });
-        nameBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dismissDialog(Dialogs.NAME_PICKER.ordinal());
-          }
-        });
-        return nameBuilder.create();
-
-      case DOW_PICKER:
-        final AlertDialog.Builder dowBuilder = new AlertDialog.Builder(this);
-        dowBuilder.setTitle(R.string.scheduled_days);
-        dowBuilder.setMultiChoiceItems(
-            info.getTime().getDaysOfWeek().names(getApplicationContext()),
-            info.getTime().getDaysOfWeek().bitmask(),
-            new OnMultiChoiceClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                if (isChecked) {
-                  info.getTime().getDaysOfWeek().addDay(Week.Day.values()[which]);
-                } else {
-                  info.getTime().getDaysOfWeek().removeDay(Week.Day.values()[which]);
-                }
-              }
-        });
-        dowBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            settingsAdapter.notifyDataSetChanged();
-            dismissDialog(Dialogs.DOW_PICKER.ordinal());
-          }
-        });
-        return dowBuilder.create();
-
-      case TONE_PICKER:
-        MediaPickerDialog mediaPicker = new MediaPickerDialog(this);
-        mediaPicker.setPickListener(new OnMediaPickListener() {
-          @Override
-          public void onMediaPick(String name, Uri media) {
-            if (name.length() == 0) {
-              name = getString(R.string.unknown_name);
-            }
-            settings.setTone(media, name);
-            settingsAdapter.notifyDataSetChanged();
-          }
-        });
-        return mediaPicker;
-
-      case SNOOZE_PICKER:
-        // This currently imposes snooze times between 1 and 60 minutes,
-        // which isn't really necessary, but I think the picker is easier
-        // to use than a free-text field that you have to type numbers into.
-        final CharSequence[] items = new CharSequence[60];
-        // Note the array index is one-off from the value (the value of 1 is
-        // at index 0).
-        for (int i = 1; i <= 60; ++i) {
-          items[i-1] = new Integer(i).toString();
-        }
-        final AlertDialog.Builder snoozeBuilder = new AlertDialog.Builder(this);
-        snoozeBuilder.setTitle(R.string.snooze_minutes);
-        snoozeBuilder.setSingleChoiceItems(items, settings.getSnoozeMinutes() - 1,
-            new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int item) {
-            settings.setSnoozeMinutes(item + 1);
-            settingsAdapter.notifyDataSetChanged();
-            dismissDialog(Dialogs.SNOOZE_PICKER.ordinal());
-          }
-        });
-        return snoozeBuilder.create();
-
-      case VOLUME_FADE_PICKER:
-        final View fadeView = getLayoutInflater().inflate(R.layout.fade_settings_dialog, null);
-        final EditText volumeStart = (EditText) fadeView.findViewById(R.id.volume_start);
-        volumeStart.setText("" + settings.getVolumeStartPercent());
-        final EditText volumeEnd = (EditText) fadeView.findViewById(R.id.volume_end);
-        volumeEnd.setText("" + settings.getVolumeEndPercent());
-        final EditText volumeDuration = (EditText) fadeView.findViewById(R.id.volume_duration);
-        volumeDuration.setText("" + settings.getVolumeChangeTimeSec());
-        final AlertDialog.Builder fadeBuilder = new AlertDialog.Builder(this);
-        fadeBuilder.setTitle(R.string.alarm_fade);
-        fadeBuilder.setView(fadeView);
-        fadeBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            settings.setVolumeStartPercent(tryParseInt(volumeStart.getText().toString(), 0));
-            settings.setVolumeEndPercent(tryParseInt(volumeEnd.getText().toString(), 100));
-            settings.setVolumeChangeTimeSec(tryParseInt(volumeDuration.getText().toString(), 20));
-            settingsAdapter.notifyDataSetChanged();
-            dismissDialog(Dialogs.VOLUME_FADE_PICKER.ordinal());
-          }
-        });
-        fadeBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dismissDialog(Dialogs.VOLUME_FADE_PICKER.ordinal());
-          }
-        });
-        return fadeBuilder.create();
-
-      case DELETE_CONFIRM:
-        final AlertDialog.Builder deleteConfirmBuilder = new AlertDialog.Builder(this);
-        deleteConfirmBuilder.setTitle(R.string.delete);
-        deleteConfirmBuilder.setMessage(R.string.confirm_delete);
-        deleteConfirmBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            service.deleteAlarm(alarmId);
-            dismissDialog(Dialogs.DELETE_CONFIRM.ordinal());
-            finish();
-          }
-        });
-        deleteConfirmBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dismissDialog(Dialogs.DELETE_CONFIRM.ordinal());
-          }
-        });
-        return deleteConfirmBuilder.create();
-
-      default:
-        return super.onCreateDialog(id);
-    }
-  }
-
   /**
    * This is a helper class for mapping SettingType to action.  Each Setting
    * in the list view returns a unique SettingType.  Trigger a dialog
@@ -438,23 +280,23 @@ public final class ActivityAlarmSettings extends Activity {
       SettingType type = adapter.getItem(position).type();
       switch (type) {
         case TIME:
-          showDialog(Dialogs.TIME_PICKER.ordinal());
+          showDialogFragment(TIME_PICKER);
           break;
 
         case NAME:
-          showDialog(Dialogs.NAME_PICKER.ordinal());
+          showDialogFragment(NAME_PICKER);
           break;
 
         case DAYS_OF_WEEK:
-          showDialog(Dialogs.DOW_PICKER.ordinal());
+          showDialogFragment(DOW_PICKER);
           break;
 
         case TONE:
-          showDialog(Dialogs.TONE_PICKER.ordinal());
+          showDialogFragment(TONE_PICKER);
           break;
 
         case SNOOZE:
-          showDialog(Dialogs.SNOOZE_PICKER.ordinal());
+          showDialogFragment(SNOOZE_PICKER);
           break;
 
         case VIBRATE:
@@ -463,13 +305,13 @@ public final class ActivityAlarmSettings extends Activity {
           break;
 
         case VOLUME_FADE:
-          showDialog(Dialogs.VOLUME_FADE_PICKER.ordinal());
+          showDialogFragment(VOLUME_FADE_PICKER);
           break;
       }
     }
   }
 
-  private int tryParseInt(String input, int fallback) {
+  private static int tryParseInt(String input, int fallback) {
     try {
       return Integer.parseInt(input);
     } catch (Exception e) {
@@ -501,7 +343,7 @@ public final class ActivityAlarmSettings extends Activity {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
       LayoutInflater inflater = getLayoutInflater();
-      View row = inflater.inflate(R.layout.settings_item, null); 
+      View row = inflater.inflate(R.layout.settings_item, null);
       TextView name = (TextView) row.findViewById(R.id.setting_name);
       TextView value = (TextView) row.findViewById(R.id.setting_value);
       Setting setting = getItem(position);
@@ -509,5 +351,185 @@ public final class ActivityAlarmSettings extends Activity {
       value.setText(setting.value());
       return row;
     }
+  }
+
+    private void showDialogFragment(int id) {
+        DialogFragment dialog = new ActivityDialogFragment().newInstance(
+                id);
+        dialog.show(getFragmentManager(), "ActivityDialogFragment");
+    }
+
+  public static class ActivityDialogFragment extends DialogFragment {
+
+    public ActivityDialogFragment newInstance(int id) {
+      ActivityDialogFragment fragment = new ActivityDialogFragment();
+      Bundle args = new Bundle();
+      args.putInt("id", id);
+      fragment.setArguments(args);
+      return fragment;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+      switch (getArguments().getInt("id")) {
+          case TIME_PICKER:
+              final AlarmTime time = info.getTime();
+              int hour = time.calendar().get(Calendar.HOUR_OF_DAY);
+              int minute = time.calendar().get(Calendar.MINUTE);
+              int second = time.calendar().get(Calendar.SECOND);
+              return new TimePickerDialog(getActivity(), getString(R.string.time),
+                      hour, minute, second, AppSettings.isDebugMode(getActivity()),
+                      new TimePickerDialog.OnTimeSetListener() {
+                          @Override
+                          public void onTimeSet(int hourOfDay, int minute, int second) {
+                              info.setTime(new AlarmTime(hourOfDay, minute, second, time.getDaysOfWeek()));
+                              settingsAdapter.notifyDataSetChanged();
+                              // Destroy this dialog so that it does not save its state.
+                              dismiss();
+                          }
+                      });
+
+          case NAME_PICKER:
+              final View nameView = View.inflate(getActivity(),
+                      R.layout.name_settings_dialog, null);
+              final TextView label = (TextView) nameView.findViewById(R.id.name_label);
+              label.setText(info.getName());
+              final AlertDialog.Builder nameBuilder = new AlertDialog.Builder(getActivity());
+              nameBuilder.setTitle(R.string.alarm_label);
+              nameBuilder.setView(nameView);
+              nameBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      info.setName(label.getEditableText().toString());
+                      settingsAdapter.notifyDataSetChanged();
+                      dismiss();
+                  }
+              });
+              nameBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      dismiss();
+                  }
+              });
+              return nameBuilder.create();
+
+          case DOW_PICKER:
+              final AlertDialog.Builder dowBuilder = new AlertDialog.Builder(getActivity());
+              dowBuilder.setTitle(R.string.scheduled_days);
+              dowBuilder.setMultiChoiceItems(
+                      info.getTime().getDaysOfWeek().names(getActivity()),
+                      info.getTime().getDaysOfWeek().bitmask(),
+                      new OnMultiChoiceClickListener() {
+                          @Override
+                          public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                              if (isChecked) {
+                                  info.getTime().getDaysOfWeek().addDay(Week.Day.values()[which]);
+                              } else {
+                                  info.getTime().getDaysOfWeek().removeDay(Week.Day.values()[which]);
+                              }
+                          }
+                      });
+              dowBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      settingsAdapter.notifyDataSetChanged();
+                      dismiss();
+                  }
+              });
+              return dowBuilder.create();
+
+          case TONE_PICKER:
+              MediaPickerDialog mediaPicker = new MediaPickerDialog(getActivity());
+              mediaPicker.setPickListener(new OnMediaPickListener() {
+                  @Override
+                  public void onMediaPick(String name, Uri media) {
+                      if (name.length() == 0) {
+                          name = getString(R.string.unknown_name);
+                      }
+                      settings.setTone(media, name);
+                      settingsAdapter.notifyDataSetChanged();
+                  }
+              });
+              return mediaPicker;
+
+          case SNOOZE_PICKER:
+              // This currently imposes snooze times between 1 and 60 minutes,
+              // which isn't really necessary, but I think the picker is easier
+              // to use than a free-text field that you have to type numbers into.
+              final CharSequence[] items = new CharSequence[60];
+              // Note the array index is one-off from the value (the value of 1 is
+              // at index 0).
+              for (int i = 1; i <= 60; ++i) {
+                  items[i-1] = Integer.toString(i);
+              }
+              final AlertDialog.Builder snoozeBuilder = new AlertDialog.Builder(getActivity());
+              snoozeBuilder.setTitle(R.string.snooze_minutes);
+              snoozeBuilder.setSingleChoiceItems(items, settings.getSnoozeMinutes() - 1,
+                      new DialogInterface.OnClickListener() {
+                          public void onClick(DialogInterface dialog, int item) {
+                              settings.setSnoozeMinutes(item + 1);
+                              settingsAdapter.notifyDataSetChanged();
+                              dismiss();
+                          }
+                      });
+              return snoozeBuilder.create();
+
+          case VOLUME_FADE_PICKER:
+              final View fadeView = View.inflate(getActivity(), R.layout.fade_settings_dialog, null);
+              final EditText volumeStart = (EditText) fadeView.findViewById(R.id.volume_start);
+              String volumeStartText = "" + settings.getVolumeStartPercent();
+              volumeStart.setText(volumeStartText );
+              final EditText volumeEnd = (EditText) fadeView.findViewById(R.id.volume_end);
+              String volumeEndText = "" + settings.getVolumeEndPercent();
+              volumeEnd.setText(volumeEndText );
+              final EditText volumeDuration = (EditText) fadeView.findViewById(R.id.volume_duration);
+              String volumeDurationText = "" + settings.getVolumeChangeTimeSec();
+              volumeDuration.setText(volumeDurationText );
+              final AlertDialog.Builder fadeBuilder = new AlertDialog.Builder(getActivity());
+              fadeBuilder.setTitle(R.string.alarm_fade);
+              fadeBuilder.setView(fadeView);
+              fadeBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      settings.setVolumeStartPercent(tryParseInt(volumeStart.getText().toString(), 0));
+                      settings.setVolumeEndPercent(tryParseInt(volumeEnd.getText().toString(), 100));
+                      settings.setVolumeChangeTimeSec(tryParseInt(volumeDuration.getText().toString(), 20));
+                      settingsAdapter.notifyDataSetChanged();
+                      dismiss();
+                  }
+              });
+              fadeBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      dismiss();
+                  }
+              });
+              return fadeBuilder.create();
+
+          case DELETE_CONFIRM:
+              final AlertDialog.Builder deleteConfirmBuilder = new AlertDialog.Builder(getActivity());
+              deleteConfirmBuilder.setTitle(R.string.delete);
+              deleteConfirmBuilder.setMessage(R.string.confirm_delete);
+              deleteConfirmBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      service.deleteAlarm(alarmId);
+                      dismiss();
+                      getActivity().finish();
+                  }
+              });
+              deleteConfirmBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      dismiss();
+                  }
+              });
+              return deleteConfirmBuilder.create();
+        default:
+          return super.onCreateDialog(savedInstanceState);
+      }
+    }
+
   }
 }

@@ -31,7 +31,7 @@ public class NotificationServiceBinder {
 
   NotificationServiceBinder(Context context) {
     this.context = context;
-    this.callbacks = new LinkedList<ServiceCallback>();
+    this.callbacks = new LinkedList<>();
   }
 
   public void bind() {

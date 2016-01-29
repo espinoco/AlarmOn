@@ -76,7 +76,9 @@ public final class AlarmViewAdapter extends ArrayAdapter<AlarmInfo> {
     if (service.clock() != null) {
       try {
         time = service.clock().pendingAlarm(info.getAlarmId());
-      } catch (RemoteException e) {}
+      } catch (RemoteException e) {
+        e.printStackTrace();
+      }
     }
     // If we couldn't find a pending alarm, display the configured time.
     if (time == null) {

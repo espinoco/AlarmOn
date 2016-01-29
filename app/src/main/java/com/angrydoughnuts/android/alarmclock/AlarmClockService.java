@@ -203,7 +203,7 @@ public final class AlarmClockService extends Service {
       editor.putString(AppSettings.LOCK_SCREEN, prefs.getString(badLockScreenName, null));
       editor.remove(badLockScreenName);
     }
-    editor.commit();
+    editor.apply();
   }
 
   @Override

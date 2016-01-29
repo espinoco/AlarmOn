@@ -33,7 +33,7 @@ public final class AppSettings {
   public static final String CUSTOM_LOCK_SCREEN_PERSISTENT = "CUSTOM_LOCK_PERSISTENT";
   public static final String ALARM_TIMEOUT = "ALARM_TIMEOUT";
 
-  public static final boolean displayNotificationIcon(Context c) {
+  public static boolean displayNotificationIcon(Context c) {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
     return prefs.getBoolean(NOTIFICATION_ICON, true);
   }
@@ -41,7 +41,7 @@ public final class AppSettings {
   private static final String FORMAT_COUNTDOWN = "%c";
   private static final String FORMAT_TIME = "%t";
   private static final String FORMAT_BOTH = "%c (%t)";
-  public static final String lockScreenString(Context c, AlarmTime nextTime) {
+  public static String lockScreenString(Context c, AlarmTime nextTime) {
     final String[] values = c.getResources().getStringArray(R.array.lock_screen_values);
     final String LOCK_SCREEN_COUNTDOWN = values[0];
     final String LOCK_SCREEN_TIME = values[1];
@@ -91,7 +91,7 @@ public final class AppSettings {
     return text;
   }
 
-  public static final boolean isDebugMode(Context c) {
+  public static boolean isDebugMode(Context c) {
     final String[] values = c.getResources().getStringArray(R.array.debug_values);
     final String DEBUG_DEFAULT = values[0];
     final String DEBUG_ON = values[1];
@@ -110,7 +110,7 @@ public final class AppSettings {
     }
   }
 
-  public static final int alarmTimeOutMins(Context c) {
+  public static int alarmTimeOutMins(Context c) {
     final String[] values = c.getResources().getStringArray(R.array.time_out_values);
     final String ONE_MIN = values[0];
     final String FIVE_MIN = values[1];

@@ -2,10 +2,10 @@
 <!-- Translation by Daniele Ottorogo <daniele.ottorogo@gmail.com> -->
 <resources>
   <string name="app_name">Alarm Klock</string>
-  <string name="add_alarm">Aggiungi Sveglia...</string>
+  <string name="add_alarm">Aggiungi Sveglia</string>
   <string name="default_settings">Impostazioni Base Sveglia</string>
   <string name="app_settings">Preferenze</string>
-  <string name="delete_all">Elimina Tutto...</string>
+  <string name="delete_all">Elimina Tutto</string>
   <string name="settings">Impostazioni</string>
   <string name="time">Ora</string>
   <string name="label">Nome</string>
@@ -27,7 +27,7 @@
   <string name="volume_duration">Durata Dissolvenza (secondi)</string>
   <string name="ok">OK</string>
   <string name="cancel">Annulla</string>
-  <string name="delete">Elimina...</string>
+  <string name="delete">Elimina</string>
   <string name="confirm_delete">Conferma Eliminazione?</string>
   <string name="snooze">POSPONI</string>
   <string name="dismiss">SPEGNI</string>
@@ -75,7 +75,7 @@
   <string name="lock_screen_countdown">Countdown</string>
   <string name="lock_screen_time">Ora Sveglia</string>
   <string name="lock_screen_both">Entrambi</string>
-  <string name="lock_screen_custom">Personalizzato...</string>
+  <string name="lock_screen_custom">Personalizzato</string>
   <string name="lock_screen_nothing">Nessuno</string>
   <string name="internal">Interne</string>
   <string name="artists">Artisti</string>
