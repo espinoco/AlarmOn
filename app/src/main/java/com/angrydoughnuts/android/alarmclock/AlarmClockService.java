@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 public final class AlarmClockService extends Service {
@@ -44,7 +45,6 @@ public final class AlarmClockService extends Service {
 
   private DbAccessor db;
   private PendingAlarmList pendingAlarms;
-  private Notification notification;
 
   @Override
   public void onCreate() {
@@ -73,9 +73,6 @@ public final class AlarmClockService extends Service {
       }
       pendingAlarms.put(alarmId, db.readAlarmInfo(alarmId).getTime());
     }
-
-    notification = new Notification(R.drawable.alarmclock_notification, null, 0);
-    notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
     ReceiverNotificationRefresh.startRefreshing(getApplicationContext());
   }
@@ -152,7 +149,17 @@ public final class AlarmClockService extends Service {
         notificationIntent, 0);
 
     Context c = getApplicationContext();
-    notification.setLatestEventInfo(c, getString(R.string.app_name), nextString, launch);
+
+      NotificationCompat.Builder builder = new NotificationCompat.Builder(
+              getApplicationContext());
+
+      Notification notification = builder
+              .setContentIntent(launch)
+              .setSmallIcon(R.drawable.alarmclock_notification)
+              .setContentTitle(getString(R.string.app_name))
+              .setContentText(nextString)
+              .build();
+      notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
     final NotificationManager manager =
       (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
