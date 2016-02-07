@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.ViewStub;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -204,7 +203,7 @@ public final class TimePickerDialog extends AlertDialog {
   private final class PickerView {
     private int calendarField;
     private String formatString;
-    private EditText text = null;
+    private TextView text = null;
     private Increment increment = null;
     private Button incrementValueButton = null;
     private Button plus = null;
@@ -231,7 +230,7 @@ public final class TimePickerDialog extends AlertDialog {
     public void inflate(View parentView, int resourceId, boolean showIncrement, IncrementValue defaultIncrement) {
       final ViewStub stub = (ViewStub) parentView.findViewById(resourceId);
       final View view = stub.inflate();
-      text = (EditText) view.findViewById(R.id.time_value);
+      text = (TextView) view.findViewById(R.id.time_value);
       text.setOnFocusChangeListener(new TextChangeListener());
       text.setOnEditorActionListener(new TextChangeListener());
 
