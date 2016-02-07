@@ -262,10 +262,13 @@ public final class AlarmClockService extends Service {
     scheduleAlarm(alarmId);
   }
 
-  public void deleteAlarm(long alarmId) {
-    pendingAlarms.remove(alarmId);
-    db.deleteAlarm(alarmId);
-  }
+    public void deleteAlarm(long alarmId) {
+        pendingAlarms.remove(alarmId);
+
+        db.deleteAlarm(alarmId);
+
+        refreshNotification();
+    }
 
   public void deleteAllAlarms() {
     for (Long alarmId : db.getAllAlarms()) {

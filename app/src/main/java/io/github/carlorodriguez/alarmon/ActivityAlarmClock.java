@@ -48,6 +48,7 @@ public final class ActivityAlarmClock extends Activity {
 
     public static final int TIME_PICKER = 0;
     public static final int DELETE_CONFIRM = 1;
+    public static final int DELETE_ALARM_CONFIRM = 2;
 
     private enum Menus { DELETE_ALL, DEFAULT_ALARM_SETTINGS, APP_SETTINGS }
 
@@ -141,6 +142,18 @@ public final class ActivityAlarmClock extends Activity {
                         info.getAlarmId());
 
                 startActivity(i);
+            }
+        });
+
+        alarmList.setOnItemLongClickListener(new AdapterView.
+                OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                showDialogFragment(DELETE_ALARM_CONFIRM,
+                        (AlarmInfo) parent.getItemAtPosition(position));
+
+                return true;
             }
         });
 
@@ -277,6 +290,13 @@ public final class ActivityAlarmClock extends Activity {
         dialog.show(getFragmentManager(), "ActivityDialogFragment");
     }
 
+    private void showDialogFragment(int id, AlarmInfo info) {
+        DialogFragment dialog = new ActivityDialogFragment().newInstance(
+                id, info);
+
+        dialog.show(getFragmentManager(), "ActivityDialogFragment");
+    }
+
     private void redraw() {
         // Show/hide debug buttons.
         if (AppSettings.isDebugMode(getApplicationContext())) {
@@ -311,6 +331,20 @@ public final class ActivityAlarmClock extends Activity {
             Bundle args = new Bundle();
 
             args.putInt("id", id);
+
+            fragment.setArguments(args);
+
+            return fragment;
+        }
+
+        public ActivityDialogFragment newInstance(int id, AlarmInfo info) {
+            ActivityDialogFragment fragment = new ActivityDialogFragment();
+
+            Bundle args = new Bundle();
+
+            args.putInt("id", id);
+
+            args.putLong("alarmId", info.getAlarmId());
 
             fragment.setArguments(args);
 
@@ -368,6 +402,38 @@ public final class ActivityAlarmClock extends Activity {
                         }
                     });
                     return deleteConfirmBuilder.create();
+                case ActivityAlarmClock.DELETE_ALARM_CONFIRM:
+                    final AlertDialog.Builder deleteAlarmConfirmBuilder =
+                            new AlertDialog.Builder(getActivity());
+
+                    deleteAlarmConfirmBuilder.setTitle(R.string.delete);
+
+                    deleteAlarmConfirmBuilder.setMessage(
+                            R.string.confirm_delete);
+
+                    deleteAlarmConfirmBuilder.setPositiveButton(R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                        int which) {
+                                    service.deleteAlarm(
+                                            getArguments().getLong("alarmId"));
+
+                                    adapter.requery();
+
+                                    dismiss();
+                                }
+                            });
+
+                    deleteAlarmConfirmBuilder.setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                        int which) {
+                                    dismiss();
+                                }
+                            });
+                    return deleteAlarmConfirmBuilder.create();
                 default:
                     return super.onCreateDialog(savedInstanceState);
             }
