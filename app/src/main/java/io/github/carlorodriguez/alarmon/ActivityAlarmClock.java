@@ -49,259 +49,328 @@ public final class ActivityAlarmClock extends Activity {
     public static final int TIME_PICKER = 0;
     public static final int DELETE_CONFIRM = 1;
 
-  private enum Menus { DELETE_ALL, DEFAULT_ALARM_SETTINGS, APP_SETTINGS }
+    private enum Menus { DELETE_ALL, DEFAULT_ALARM_SETTINGS, APP_SETTINGS }
 
-  private static AlarmClockServiceBinder service;
-  private NotificationServiceBinder notifyService;
-  private DbAccessor db;
-  private static AlarmViewAdapter adapter;
-  private TextView clock;
-  private Button testBtn;
-  private Button pendingBtn;
-  private Handler handler;
-  private Runnable tickCallback;
+    private static AlarmClockServiceBinder service;
+    private NotificationServiceBinder notifyService;
+    private DbAccessor db;
+    private static AlarmViewAdapter adapter;
+    private TextView clock;
+    private Button testBtn;
+    private Button pendingBtn;
+    private Handler handler;
+    private Runnable tickCallback;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.alarm_list);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    // Access to in-memory and persistent data structures.
-    service = new AlarmClockServiceBinder(getApplicationContext());
-    db = new DbAccessor(getApplicationContext());
-    handler = new Handler();
-    notifyService = new NotificationServiceBinder(getApplicationContext());
+        setContentView(R.layout.alarm_list);
 
-    // Setup individual UI elements.
-    // A simple clock.
-    clock = (TextView) findViewById(R.id.clock);
+        // Access to in-memory and persistent data structures.
+        service = new AlarmClockServiceBinder(getApplicationContext());
 
-    // Used in debug mode.  Schedules an alarm for 5 seconds in the future
-    // when clicked.
-    testBtn = (Button) findViewById(R.id.test_alarm);
-    testBtn.setOnClickListener(new OnClickListener() {
-      public void onClick(View view) {
-        final Calendar testTime = Calendar.getInstance();
-        testTime.add(Calendar.SECOND, 5);
-        service.createAlarm(new AlarmTime(testTime.get(
-            Calendar.HOUR_OF_DAY),
-            testTime.get(Calendar.MINUTE),
-            testTime.get(Calendar.SECOND)));
-        adapter.requery();
-      }
-    });
+        db = new DbAccessor(getApplicationContext());
 
-    // Displays a list of pending alarms (only visible in debug mode).
-    pendingBtn = (Button) findViewById(R.id.pending_alarms);
-    pendingBtn.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        startActivity(
-            new Intent(getApplicationContext(), ActivityPendingAlarms.class));
-      }
-    });
+        handler = new Handler();
 
-    // Opens the time picker dialog and allows the user to schedule a new alarm.
-    Button addBtn = (Button) findViewById(R.id.add_alarm);
-    addBtn.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View view) {
-          showDialogFragment(TIME_PICKER);
-      }
-    });
+        notifyService = new NotificationServiceBinder(getApplicationContext());
 
-    // Setup the alarm list and the underlying adapter.  Clicking an individual
-    // item will start the settings activity.
-    final ListView alarmList = (ListView) findViewById(R.id.alarm_list);
-    adapter = new AlarmViewAdapter(this, db, service);
-    alarmList.setAdapter(adapter);
-    alarmList.setOnItemClickListener(new OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-        final AlarmInfo info = (AlarmInfo) adapter.getItemAtPosition(position);
-        final Intent i = new Intent(getApplicationContext(), ActivityAlarmSettings.class);
-        i.putExtra(ActivityAlarmSettings.EXTRAS_ALARM_ID, info.getAlarmId());
-        startActivity(i);
-      }
-    });
+        // Setup individual UI elements.
+        // A simple clock.
+        clock = (TextView) findViewById(R.id.clock);
 
-    // This is a self-scheduling callback that is responsible for refreshing
-    // the screen.  It is started in onResume() and stopped in onPause().
-    tickCallback = new Runnable() {
-      @Override
-      public void run() {
-        // Redraw the screen.
-        redraw();
+        // Used in debug mode.  Schedules an alarm for 5 seconds in the future
+        // when clicked.
+        testBtn = (Button) findViewById(R.id.test_alarm);
 
-        // Schedule the next update on the next interval boundary.
-        AlarmUtil.Interval interval = AlarmUtil.Interval.MINUTE;
-        if (AppSettings.isDebugMode(getApplicationContext())) {
-          interval = AlarmUtil.Interval.SECOND;
-        }
-        long next = AlarmUtil.millisTillNextInterval(interval);
-        handler.postDelayed(tickCallback, next);
-      }
-    };
-  }
+        testBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View view) {
+                final Calendar testTime = Calendar.getInstance();
 
-  @Override
-  protected void onResume() {
-    super.onResume();
-    service.bind();
-    handler.post(tickCallback);
-    adapter.requery();
-    notifyService.bind();
-    notifyService.call(new NotificationServiceBinder.ServiceCallback() {
-        @Override
-        public void run(NotificationServiceInterface service) {
-            int count;
-            try {
-                count = service.firingAlarmCount();
-            } catch (RemoteException e) {
-                return;
-            } finally {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyService.unbind();
-                    }
-                });
+                testTime.add(Calendar.SECOND, 5);
+
+                service.createAlarm(new AlarmTime(
+                                testTime.get(Calendar.HOUR_OF_DAY),
+                                testTime.get(Calendar.MINUTE),
+                                testTime.get(Calendar.SECOND)));
+
+                adapter.requery();
             }
-            if (count > 0) {
-                Intent notifyActivity = new Intent(getApplicationContext(), ActivityAlarmNotification.class);
-                notifyActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(notifyActivity);
+        });
+
+        // Displays a list of pending alarms (only visible in debug mode).
+        pendingBtn = (Button) findViewById(R.id.pending_alarms);
+
+        pendingBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),
+                                ActivityPendingAlarms.class));
             }
-        }
-    });
-  }
+        });
 
-  @Override
-  protected void onPause() {
-    super.onPause();
-    handler.removeCallbacks(tickCallback);
-    service.unbind();
-  }
+        // Opens the time picker dialog and allows the user to schedule a new alarm.
+        Button addBtn = (Button) findViewById(R.id.add_alarm);
 
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-    db.closeConnections();
-  }
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                showDialogFragment(TIME_PICKER);
+            }
+        });
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    MenuItem delete_all =
-      menu.add(0, Menus.DELETE_ALL.ordinal(), 0, R.string.delete_all);
-    delete_all.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-    MenuItem alarm_settings =
-      menu.add(0, Menus.DEFAULT_ALARM_SETTINGS.ordinal(), 0, R.string.default_settings);
-    alarm_settings.setIcon(android.R.drawable.ic_lock_idle_alarm);
-    MenuItem app_settings =
-      menu.add(0, Menus.APP_SETTINGS.ordinal(), 0, R.string.app_settings);
-    app_settings.setIcon(android.R.drawable.ic_menu_preferences);
-    return super.onCreateOptionsMenu(menu);
-  }
+        // Setup the alarm list and the underlying adapter. Clicking an individual
+        // item will start the settings activity.
+        final ListView alarmList = (ListView) findViewById(R.id.alarm_list);
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (Menus.values()[item.getItemId()]) {
-      case DELETE_ALL:
-        showDialogFragment(DELETE_CONFIRM);
-        break;
-      case DEFAULT_ALARM_SETTINGS:
-        Intent alarm_settings = new Intent(getApplicationContext(), ActivityAlarmSettings.class);
-        alarm_settings.putExtra(
-            ActivityAlarmSettings.EXTRAS_ALARM_ID, AlarmSettings.DEFAULT_SETTINGS_ID);
-        startActivity(alarm_settings);
-        break;
-      case APP_SETTINGS:
-        Intent app_settings = new Intent(getApplicationContext(), ActivityAppSettings.class);
-        startActivity(app_settings);
-        break;
+        adapter = new AlarmViewAdapter(this, db, service);
+
+        alarmList.setAdapter(adapter);
+
+        alarmList.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view,
+                    int position, long id) {
+                final AlarmInfo info = (AlarmInfo)
+                        adapter.getItemAtPosition(position);
+
+                final Intent i = new Intent(getApplicationContext(),
+                        ActivityAlarmSettings.class);
+
+                i.putExtra(ActivityAlarmSettings.EXTRAS_ALARM_ID,
+                        info.getAlarmId());
+
+                startActivity(i);
+            }
+        });
+
+        // This is a self-scheduling callback that is responsible for refreshing
+        // the screen.  It is started in onResume() and stopped in onPause().
+        tickCallback = new Runnable() {
+            @Override
+            public void run() {
+                // Redraw the screen.
+                redraw();
+
+                // Schedule the next update on the next interval boundary.
+                AlarmUtil.Interval interval = AlarmUtil.Interval.MINUTE;
+
+                if (AppSettings.isDebugMode(getApplicationContext())) {
+                    interval = AlarmUtil.Interval.SECOND;
+                }
+
+                long next = AlarmUtil.millisTillNextInterval(interval);
+
+                handler.postDelayed(tickCallback, next);
+            }
+        };
     }
-    return super.onOptionsItemSelected(item);
-  }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        service.bind();
+
+        handler.post(tickCallback);
+
+        adapter.requery();
+
+        notifyService.bind();
+
+        notifyService.call(new NotificationServiceBinder.ServiceCallback() {
+            @Override
+            public void run(NotificationServiceInterface service) {
+                int count;
+
+                try {
+                    count = service.firingAlarmCount();
+                } catch (RemoteException e) {
+                    return;
+                } finally {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyService.unbind();
+                        }
+                    });
+                }
+
+                if (count > 0) {
+                    Intent notifyActivity = new Intent(getApplicationContext(),
+                            ActivityAlarmNotification.class);
+
+                    notifyActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    startActivity(notifyActivity);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        handler.removeCallbacks(tickCallback);
+
+        service.unbind();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        db.closeConnections();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem delete_all = menu.add(0, Menus.DELETE_ALL.ordinal(), 0,
+                R.string.delete_all);
+
+        delete_all.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+
+        MenuItem alarm_settings = menu.add(0,
+                Menus.DEFAULT_ALARM_SETTINGS.ordinal(), 0,
+                R.string.default_settings);
+
+        alarm_settings.setIcon(android.R.drawable.ic_lock_idle_alarm);
+
+        MenuItem app_settings = menu.add(0, Menus.APP_SETTINGS.ordinal(), 0,
+                R.string.app_settings);
+
+        app_settings.setIcon(android.R.drawable.ic_menu_preferences);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (Menus.values()[item.getItemId()]) {
+            case DELETE_ALL:
+                showDialogFragment(DELETE_CONFIRM);
+                break;
+            case DEFAULT_ALARM_SETTINGS:
+                Intent alarm_settings = new Intent(getApplicationContext(),
+                        ActivityAlarmSettings.class);
+
+                alarm_settings.putExtra(ActivityAlarmSettings.EXTRAS_ALARM_ID,
+                        AlarmSettings.DEFAULT_SETTINGS_ID);
+
+                startActivity(alarm_settings);
+                break;
+            case APP_SETTINGS:
+                Intent app_settings = new Intent(getApplicationContext(),
+                        ActivityAppSettings.class);
+
+                startActivity(app_settings);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void showDialogFragment(int id) {
         DialogFragment dialog = new ActivityDialogFragment().newInstance(
                 id);
+
         dialog.show(getFragmentManager(), "ActivityDialogFragment");
     }
 
-  private void redraw() {
-    // Show/hide debug buttons.
-    if (AppSettings.isDebugMode(getApplicationContext())) {
-      testBtn.setVisibility(View.VISIBLE);
-      pendingBtn.setVisibility(View.VISIBLE);
-    } else {
-      testBtn.setVisibility(View.GONE);
-      pendingBtn.setVisibility(View.GONE);
+    private void redraw() {
+        // Show/hide debug buttons.
+        if (AppSettings.isDebugMode(getApplicationContext())) {
+            testBtn.setVisibility(View.VISIBLE);
+
+            pendingBtn.setVisibility(View.VISIBLE);
+        } else {
+            testBtn.setVisibility(View.GONE);
+
+            pendingBtn.setVisibility(View.GONE);
+        }
+
+        // Recompute expiration times in the list view
+        adapter.notifyDataSetChanged();
+
+        // Update clock
+        Calendar c = Calendar.getInstance();
+
+        AlarmTime time = new AlarmTime(
+                c.get(Calendar.HOUR_OF_DAY),
+                c.get(Calendar.MINUTE),
+                c.get(Calendar.SECOND));
+
+        clock.setText(time.localizedString(getApplicationContext()));
     }
-
-    // Recompute expiration times in the list view
-    adapter.notifyDataSetChanged();
-
-    // Update clock
-    Calendar c = Calendar.getInstance();
-    AlarmTime time = new AlarmTime(
-        c.get(Calendar.HOUR_OF_DAY),
-        c.get(Calendar.MINUTE),
-        c.get(Calendar.SECOND));
-    clock.setText(time.localizedString(getApplicationContext()));
-  }
 
     public static class ActivityDialogFragment extends DialogFragment {
 
         public ActivityDialogFragment newInstance(int id) {
             ActivityDialogFragment fragment = new ActivityDialogFragment();
+
             Bundle args = new Bundle();
+
             args.putInt("id", id);
+
             fragment.setArguments(args);
+
             return fragment;
         }
 
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-          switch (getArguments().getInt("id")) {
-            case ActivityAlarmClock.TIME_PICKER:
-              return  new TimePickerDialog(
-                      getActivity(), getString(R.string.add_alarm),
-                      AppSettings.isDebugMode(getActivity()),
-                      new TimePickerDialog.OnTimeSetListener() {
+            switch (getArguments().getInt("id")) {
+                case ActivityAlarmClock.TIME_PICKER:
+                    return  new TimePickerDialog(getActivity(),
+                            getString(R.string.add_alarm),
+                            AppSettings.isDebugMode(getActivity()),
+                            new TimePickerDialog.OnTimeSetListener() {
+                                @Override
+                                public void onTimeSet(int hourOfDay, int minute,
+                                        int second) {
+                                    // When a time is selected, create it via the service and
+                                    // force the list view to re-query the alarm list.
+                                    service.createAlarm(new AlarmTime(hourOfDay,
+                                                    minute, second));
+
+                                    adapter.requery();
+
+                                    // Destroy this dialog so that it does not save its state.
+                                    dismiss();
+                                }
+                            });
+                case ActivityAlarmClock.DELETE_CONFIRM:
+                    final AlertDialog.Builder deleteConfirmBuilder =
+                            new AlertDialog.Builder(getActivity());
+
+                    deleteConfirmBuilder.setTitle(R.string.delete_all);
+
+                    deleteConfirmBuilder.setMessage(R.string.confirm_delete);
+
+                    deleteConfirmBuilder.setPositiveButton(R.string.ok,
+                            new DialogInterface.OnClickListener() {
                         @Override
-                        public void onTimeSet(int hourOfDay, int minute, int second) {
-                          // When a time is selected, create it via the service and
-                          // force the list view to re-query the alarm list.
-                          service.createAlarm(new AlarmTime(hourOfDay, minute, second));
-                          adapter.requery();
-                          // Destroy this dialog so that it does not save its state.
+                        public void onClick(DialogInterface dialog, int which) {
+                            service.deleteAllAlarms();
+
+                            adapter.requery();
+
                             dismiss();
                         }
-                      });
-            case ActivityAlarmClock.DELETE_CONFIRM:
-              final AlertDialog.Builder deleteConfirmBuilder =
-                      new AlertDialog.Builder(getActivity());
-              deleteConfirmBuilder.setTitle(R.string.delete_all);
-              deleteConfirmBuilder.setMessage(R.string.confirm_delete);
-              deleteConfirmBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialog, int which) {
-                  service.deleteAllAlarms();
-                  adapter.requery();
-                    dismiss();
-                }
-              });
-              deleteConfirmBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dismiss();
-                }
-              });
-              return deleteConfirmBuilder.create();
-            default:
-              return super.onCreateDialog(savedInstanceState);
-          }
+                    });
+
+                    deleteConfirmBuilder.setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dismiss();
+                        }
+                    });
+                    return deleteConfirmBuilder.create();
+                default:
+                    return super.onCreateDialog(savedInstanceState);
+            }
         }
 
     }
