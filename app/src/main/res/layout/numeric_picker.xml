@@ -13,8 +13,8 @@
   <EditText android:id="@+id/time_value"
     android:textSize="24sp"
     android:gravity="center"
-    android:inputType="phone"
     android:digits="0123456789"
+    android:inputType="numberSigned"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
   <Button android:id="@+id/time_minus"
