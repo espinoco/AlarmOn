@@ -88,7 +88,10 @@ public final class ActivityAlarmSettings extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
     setContentView(R.layout.settings);
+
+      setTitle(getString(R.string.settings));
 
     // An alarm id is required in the extras bundle.
     alarmId = getIntent().getExtras().getLong(EXTRAS_ALARM_ID, MISSING_EXTRAS);
