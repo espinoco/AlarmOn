@@ -40,180 +40,223 @@ import android.widget.TextView;
  * android:launchMode="singleInstance" is set in the manifest file).
  */
 public final class ActivityAlarmNotification extends Activity {
-  public final static String TIMEOUT_COMMAND = "timeout";
+
+    public static final String TIMEOUT_COMMAND = "timeout";
 
     public static final int TIMEOUT = 0;
 
-  private NotificationServiceBinder notifyService;
-  private DbAccessor db;
-  private Handler handler;
-  private Runnable timeTick;
+    private NotificationServiceBinder notifyService;
+    private DbAccessor db;
+    private Handler handler;
+    private Runnable timeTick;
 
-  // Dialog state
-  int snoozeMinutes;
+    // Dialog state
+    int snoozeMinutes;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.notification);
-    // Make sure this window always shows over the lock screen.
-    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    db = new DbAccessor(getApplicationContext());
+        setContentView(R.layout.notification);
 
-    // Start the notification service and bind to it.
-    notifyService = new NotificationServiceBinder(getApplicationContext());
-    notifyService.bind();
+        // Make sure this window always shows over the lock screen.
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
-    // Setup a self-scheduling event loops.
-    handler = new Handler();
+        db = new DbAccessor(getApplicationContext());
 
-    timeTick = new Runnable() {
-      @Override
-      public void run() {
-        notifyService.call(new NotificationServiceBinder.ServiceCallback() {
-          @Override
-          public void run(NotificationServiceInterface service) {
-            try {
-              TextView volume = (TextView) findViewById(R.id.volume);
-              String volumeText = "Volume: " + service.volume();
-              volume.setText(volumeText);
-            } catch (RemoteException e) {
-              e.printStackTrace();
+        // Start the notification service and bind to it.
+        notifyService = new NotificationServiceBinder(getApplicationContext());
+
+        notifyService.bind();
+
+        // Setup a self-scheduling event loops.
+        handler = new Handler();
+
+        timeTick = new Runnable() {
+            @Override
+            public void run() {
+                notifyService.call(new NotificationServiceBinder.
+                        ServiceCallback() {
+                    @Override
+                    public void run(NotificationServiceInterface service) {
+                        try {
+                            TextView volume = (TextView)
+                                    findViewById(R.id.volume);
+
+                            String volumeText = "Volume: " + service.volume();
+
+                            volume.setText(volumeText);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+
+                        long next = AlarmUtil.millisTillNextInterval(
+                                AlarmUtil.Interval.SECOND);
+
+                        handler.postDelayed(timeTick, next);
+                    }
+                });
             }
+        };
 
-            long next = AlarmUtil.millisTillNextInterval(AlarmUtil.Interval.SECOND);
-            handler.postDelayed(timeTick, next);
-          }
+        // Setup individual UI elements.
+        final Button snoozeButton = (Button) findViewById(R.id.notify_snooze);
+
+        snoozeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notifyService.acknowledgeCurrentNotification(snoozeMinutes);
+
+                finish();
+            }
         });
-      }
-    };
 
-    // Setup individual UI elements.
-    final Button snoozeButton = (Button) findViewById(R.id.notify_snooze);
-    snoozeButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        notifyService.acknowledgeCurrentNotification(snoozeMinutes);
-        finish();
-      }
-    });
+        final Button decreaseSnoozeButton = (Button) findViewById(
+                R.id.notify_snooze_minus_five);
 
-    final Button decreaseSnoozeButton = (Button) findViewById(R.id.notify_snooze_minus_five);
-    decreaseSnoozeButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        int snooze = snoozeMinutes - 5;
-        if (snooze < 5) {
-          snooze = 5;
-        }
-        snoozeMinutes = snooze;
-        redraw();
-      }
-    });
+        decreaseSnoozeButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int snooze = snoozeMinutes - 5;
 
-    final Button increaseSnoozeButton = (Button) findViewById(R.id.notify_snooze_plus_five);
-    increaseSnoozeButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        int snooze = snoozeMinutes + 5;
-        if (snooze > 60) {
-          snooze = 60;
-        }
-        snoozeMinutes = snooze;
-        redraw();
-      }
-    });
+                if (snooze < 5) {
+                    snooze = 5;
+                }
 
-    final Slider dismiss = (Slider) findViewById(R.id.dismiss_slider);
-    dismiss.setOnCompleteListener(new Slider.OnCompleteListener() {
-      @Override
-      public void complete() {
-        notifyService.acknowledgeCurrentNotification(0);
-        finish();
-      }
-    });
-  }
+                snoozeMinutes = snooze;
 
-  @Override
-  protected void onResume() {
-    super.onResume();
-    handler.post(timeTick);
-    redraw();
-  }
+                redraw();
+            }
+        });
 
-  @Override
-  protected void onPause() {
-    super.onPause();
-    handler.removeCallbacks(timeTick);
-  }
+        final Button increaseSnoozeButton = (Button) findViewById(
+                R.id.notify_snooze_plus_five);
 
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-    db.closeConnections();
-    notifyService.unbind();
-  }
+        increaseSnoozeButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int snooze = snoozeMinutes + 5;
 
-  @Override
-  protected void onNewIntent(Intent intent) {
-    super.onNewIntent(intent);
-    Bundle extras = intent.getExtras();
-    if (extras == null || !extras.getBoolean(TIMEOUT_COMMAND, false)) {
-      return;
+                if (snooze > 60) {
+                    snooze = 60;
+                }
+
+                snoozeMinutes = snooze;
+
+                redraw();
+            }
+        });
+
+        final Slider dismiss = (Slider) findViewById(R.id.dismiss_slider);
+
+        dismiss.setOnCompleteListener(new Slider.OnCompleteListener() {
+            @Override
+            public void complete() {
+                notifyService.acknowledgeCurrentNotification(0);
+
+                finish();
+            }
+        });
     }
-    // The notification service has signaled this activity for a second time.
-    // This represents a acknowledgment timeout.  Display the appropriate error.
-    // (which also finish()es this activity.
-    showDialogFragment(TIMEOUT);
-  }
 
-  private void redraw() {
-    notifyService.call(new NotificationServiceBinder.ServiceCallback() {
-      @Override
-      public void run(NotificationServiceInterface service) {
-        long alarmId;
-        try {
-          alarmId = service.currentAlarmId();
-        } catch (RemoteException e) {
-          return;
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        handler.post(timeTick);
+
+        redraw();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        handler.removeCallbacks(timeTick);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        db.closeConnections();
+
+        notifyService.unbind();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        Bundle extras = intent.getExtras();
+
+        if (extras == null || !extras.getBoolean(TIMEOUT_COMMAND, false)) {
+            return;
         }
-        AlarmInfo alarmInfo = db.readAlarmInfo(alarmId);
-        if (snoozeMinutes == 0) {
-          snoozeMinutes = db.readAlarmSettings(alarmId).getSnoozeMinutes();
-        }
 
-          String infoTime = "";
+        // The notification service has signaled this activity for a second time.
+        // This represents a acknowledgment timeout.  Display the appropriate error.
+        // (which also finish()es this activity.
+        showDialogFragment(TIMEOUT);
+    }
 
-          String infoName = "";
+    private void redraw() {
+        notifyService.call(new NotificationServiceBinder.ServiceCallback() {
+            @Override
+            public void run(NotificationServiceInterface service) {
+                long alarmId;
 
-          if (alarmInfo != null) {
-              infoTime = alarmInfo.getTime().toString();
+                try {
+                    alarmId = service.currentAlarmId();
+                } catch (RemoteException e) {
+                    return;
+                }
 
-              infoName = alarmInfo.getName();
-          }
+                AlarmInfo alarmInfo = db.readAlarmInfo(alarmId);
 
-        String info = infoTime + "\n" + infoName;
+                if (snoozeMinutes == 0) {
+                    snoozeMinutes = db.readAlarmSettings(alarmId).
+                            getSnoozeMinutes();
+                }
 
-        if (AppSettings.isDebugMode(getApplicationContext())) {
-          info += " [" + alarmId + "]";
-          findViewById(R.id.volume).setVisibility(View.VISIBLE);
-        } else {
-          findViewById(R.id.volume).setVisibility(View.GONE);
-        }
-        TextView infoText = (TextView) findViewById(R.id.alarm_info);
-        infoText.setText(info);
-        TextView snoozeInfo = (TextView) findViewById(R.id.notify_snooze_time);
-        String snoozeInfoText = getString(R.string.snooze) + "\n"
-                + getString(R.string.minutes, snoozeMinutes);
-        snoozeInfo.setText(snoozeInfoText);
-      }
-    });
-  }
+                String infoTime = "";
+
+                String infoName = "";
+
+                if (alarmInfo != null) {
+                    infoTime = alarmInfo.getTime().toString();
+
+                    infoName = alarmInfo.getName();
+                }
+
+                String info = infoTime + "\n" + infoName;
+
+                if (AppSettings.isDebugMode(getApplicationContext())) {
+                    info += " [" + alarmId + "]";
+
+                    findViewById(R.id.volume).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.volume).setVisibility(View.GONE);
+                }
+                TextView infoText = (TextView) findViewById(R.id.alarm_info);
+
+                infoText.setText(info);
+
+                TextView snoozeInfo = (TextView) findViewById(
+                        R.id.notify_snooze_time);
+
+                String snoozeInfoText = getString(R.string.snooze) + "\n"
+                        + getString(R.string.minutes, snoozeMinutes);
+
+                snoozeInfo.setText(snoozeInfoText);
+            }
+        });
+    }
 
     private void showDialogFragment(int id) {
         DialogFragment dialog = new ActivityDialogFragment().newInstance(
                 id);
+
         dialog.show(getFragmentManager(), "ActivityDialogFragment");
     }
 
@@ -221,9 +264,13 @@ public final class ActivityAlarmNotification extends Activity {
 
         public ActivityDialogFragment newInstance(int id) {
             ActivityDialogFragment fragment = new ActivityDialogFragment();
+
             Bundle args = new Bundle();
+
             args.putInt("id", id);
+
             fragment.setArguments(args);
+
             return fragment;
         }
 
@@ -234,19 +281,28 @@ public final class ActivityAlarmNotification extends Activity {
                 case TIMEOUT:
                     final AlertDialog.Builder timeoutBuilder =
                             new AlertDialog.Builder(getActivity());
+
                     timeoutBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+
                     timeoutBuilder.setTitle(R.string.time_out_title);
+
                     timeoutBuilder.setMessage(R.string.time_out_error);
-                    timeoutBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
+
+                    timeoutBuilder.setPositiveButton(R.string.ok,
+                            new DialogInterface.OnClickListener(){
                         @Override
                         public void onClick(DialogInterface dialog, int which) {}
                     });
+
                     AlertDialog dialog = timeoutBuilder.create();
-                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+                    dialog.setOnDismissListener(new DialogInterface.
+                            OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
                             getActivity().finish();
                         }});
+
                     return dialog;
                 default:
                     return super.onCreateDialog(savedInstanceState);
