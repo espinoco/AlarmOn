@@ -197,8 +197,8 @@ public class NotificationService extends Service {
         String notifyText;
         try {
           AlarmInfo info = db.readAlarmInfo(currentAlarmId());
-          notifyText = (info.getName() == null) ? "" : info.getName();
-          if (notifyText.equals("")) {
+          notifyText = (info == null || info.getName() == null) ? "" : info.getName();
+          if (notifyText.equals("") && info != null) {
             notifyText = info.getTime().localizedString(getApplicationContext());
           }
         } catch (NoAlarmsException e) {

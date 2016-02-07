@@ -89,7 +89,10 @@ public final class AlarmViewAdapter extends ArrayAdapter<AlarmInfo> {
     if (AppSettings.isDebugMode(getContext())) {
       alarmId = " [" + info.getAlarmId() + "]";
     }
-    timeView.setText(timeStr + alarmId);
+    String timeText = timeStr + alarmId;
+
+    timeView.setText(timeText);
+
     enabledView.setChecked(info.enabled());
 
     nextView.setText(time.timeUntilString(getContext()));

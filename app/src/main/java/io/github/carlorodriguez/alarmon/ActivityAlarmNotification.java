@@ -18,11 +18,13 @@ package io.github.carlorodriguez.alarmon;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -39,7 +41,8 @@ import android.widget.TextView;
  */
 public final class ActivityAlarmNotification extends Activity {
   public final static String TIMEOUT_COMMAND = "timeout";
-  private enum Dialogs { TIMEOUT }
+
+    public static final int TIMEOUT = 0;
 
   private NotificationServiceBinder notifyService;
   private DbAccessor db;
@@ -73,7 +76,8 @@ public final class ActivityAlarmNotification extends Activity {
           public void run(NotificationServiceInterface service) {
             try {
               TextView volume = (TextView) findViewById(R.id.volume);
-              volume.setText("Volume: " + service.volume());
+              String volumeText = "Volume: " + service.volume();
+              volume.setText(volumeText);
             } catch (RemoteException e) {
               e.printStackTrace();
             }
@@ -155,40 +159,16 @@ public final class ActivityAlarmNotification extends Activity {
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     Bundle extras = intent.getExtras();
-    if (extras == null || extras.getBoolean(TIMEOUT_COMMAND, false) == false) {
+    if (extras == null || !extras.getBoolean(TIMEOUT_COMMAND, false)) {
       return;
     }
     // The notification service has signaled this activity for a second time.
     // This represents a acknowledgment timeout.  Display the appropriate error.
     // (which also finish()es this activity.
-    showDialog(Dialogs.TIMEOUT.ordinal());
+    showDialogFragment(TIMEOUT);
   }
 
-  @Override
-  protected Dialog onCreateDialog(int id) {
-    switch (Dialogs.values()[id]) {
-      case TIMEOUT:
-        final AlertDialog.Builder timeoutBuilder = new AlertDialog.Builder(this);
-        timeoutBuilder.setIcon(android.R.drawable.ic_dialog_alert);
-        timeoutBuilder.setTitle(R.string.time_out_title);
-        timeoutBuilder.setMessage(R.string.time_out_error);
-        timeoutBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
-          @Override
-          public void onClick(DialogInterface dialog, int which) {}
-        });
-        AlertDialog dialog = timeoutBuilder.create();
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-          @Override
-          public void onDismiss(DialogInterface dialog) {
-            finish();
-          }});
-        return dialog;
-      default:
-        return super.onCreateDialog(id);
-    }
-  }
-
-  private final void redraw() {
+  private void redraw() {
     notifyService.call(new NotificationServiceBinder.ServiceCallback() {
       @Override
       public void run(NotificationServiceInterface service) {
@@ -202,7 +182,19 @@ public final class ActivityAlarmNotification extends Activity {
         if (snoozeMinutes == 0) {
           snoozeMinutes = db.readAlarmSettings(alarmId).getSnoozeMinutes();
         }
-        String info = alarmInfo.getTime().toString() + "\n" + alarmInfo.getName();
+
+          String infoTime = "";
+
+          String infoName = "";
+
+          if (alarmInfo != null) {
+              infoTime = alarmInfo.getTime().toString();
+
+              infoName = alarmInfo.getName();
+          }
+
+        String info = infoTime + "\n" + infoName;
+
         if (AppSettings.isDebugMode(getApplicationContext())) {
           info += " [" + alarmId + "]";
           findViewById(R.id.volume).setVisibility(View.VISIBLE);
@@ -212,9 +204,55 @@ public final class ActivityAlarmNotification extends Activity {
         TextView infoText = (TextView) findViewById(R.id.alarm_info);
         infoText.setText(info);
         TextView snoozeInfo = (TextView) findViewById(R.id.notify_snooze_time);
-        snoozeInfo.setText(getString(R.string.snooze) + "\n"
-            + getString(R.string.minutes, snoozeMinutes));
+        String snoozeInfoText = getString(R.string.snooze) + "\n"
+                + getString(R.string.minutes, snoozeMinutes);
+        snoozeInfo.setText(snoozeInfoText);
       }
     });
   }
+
+    private void showDialogFragment(int id) {
+        DialogFragment dialog = new ActivityDialogFragment().newInstance(
+                id);
+        dialog.show(getFragmentManager(), "ActivityDialogFragment");
+    }
+
+    public static class ActivityDialogFragment extends DialogFragment {
+
+        public ActivityDialogFragment newInstance(int id) {
+            ActivityDialogFragment fragment = new ActivityDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt("id", id);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            switch (getArguments().getInt("id")) {
+                case TIMEOUT:
+                    final AlertDialog.Builder timeoutBuilder =
+                            new AlertDialog.Builder(getActivity());
+                    timeoutBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+                    timeoutBuilder.setTitle(R.string.time_out_title);
+                    timeoutBuilder.setMessage(R.string.time_out_error);
+                    timeoutBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {}
+                    });
+                    AlertDialog dialog = timeoutBuilder.create();
+                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            getActivity().finish();
+                        }});
+                    return dialog;
+                default:
+                    return super.onCreateDialog(savedInstanceState);
+            }
+        }
+
+    }
+
 }

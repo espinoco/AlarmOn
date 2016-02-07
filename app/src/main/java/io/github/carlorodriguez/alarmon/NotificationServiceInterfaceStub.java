@@ -17,8 +17,6 @@ package io.github.carlorodriguez.alarmon;
 
 import io.github.carlorodriguez.alarmon.NotificationService.NoAlarmsException;
 
-import io.github.carlorodriguez.alarmon.NotificationServiceInterface;
-
 import android.content.Context;
 import android.os.RemoteException;
 import android.widget.Toast;

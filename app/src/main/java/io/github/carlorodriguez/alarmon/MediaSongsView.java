@@ -83,7 +83,8 @@ public class MediaSongsView extends MediaListView implements OnItemClickListener
       new ArrayList<>(songsColumns.length + 1);
     defaultColumns.addAll(Arrays.asList(songsColumns));
     defaultColumns.add(BaseColumns._ID);
-    final MatrixCursor defaultsCursor = new MatrixCursor(defaultColumns.toArray(new String[] {}));
+    final MatrixCursor defaultsCursor = new MatrixCursor(defaultColumns.toArray(
+            new String[defaultColumns.size()]));
     RowBuilder row = defaultsCursor.newRow();
     row.add("Default");
     row.add(DEFAULT_TONE_INDEX);

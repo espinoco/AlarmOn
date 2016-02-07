@@ -16,6 +16,7 @@
 package io.github.carlorodriguez.alarmon;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -63,9 +64,15 @@ public class Slider extends ViewGroup {
     // Setup the background which 'holds' the slider.
     tray = new TextView(getContext());
     tray.setBackgroundResource(R.drawable.slider_background);
-    tray.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+    tray.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     tray.setGravity(Gravity.CENTER);
-    tray.setTextAppearance(getContext(), R.style.SliderText);
+
+    if (Build.VERSION.SDK_INT < 23) {
+        tray.setTextAppearance(getContext(), R.style.SliderText);
+    } else {
+        tray.setTextAppearance(R.style.SliderText);
+    }
+
     tray.setText(R.string.dismiss);
     addView(tray);
 
@@ -119,19 +126,11 @@ public class Slider extends ViewGroup {
   }
 
   private boolean withinX(View v, float x) {
-    if (x < v.getLeft() || x > v.getRight()) {
-      return false;
-    } else {
-      return true;
-    }
+    return !(x < v.getLeft() || x > v.getRight());
   }
 
   private boolean withinY(View v, float y) {
-    if (y < v.getTop() || y > v.getBottom()) {
-      return false;
-    } else {
-      return true;
-    }
+    return !(y < v.getTop() || y > v.getBottom());
   }
 
   private void slideDotHome() {

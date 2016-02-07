@@ -26,7 +26,6 @@ import android.os.RemoteException;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import io.github.carlorodriguez.alarmon.AlarmClockInterface;
 /**
  * This is a simple activity which displays all of the scheduled (in memory)
  * alarms that currently exist (For debugging only).

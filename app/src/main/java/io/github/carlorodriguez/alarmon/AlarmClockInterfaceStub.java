@@ -19,8 +19,6 @@ import android.content.Context;
 import android.os.RemoteException;
 import android.widget.Toast;
 
-import io.github.carlorodriguez.alarmon.AlarmClockInterface;
-
 public final class AlarmClockInterfaceStub extends AlarmClockInterface.Stub {
   private Context context;
   private AlarmClockService service;

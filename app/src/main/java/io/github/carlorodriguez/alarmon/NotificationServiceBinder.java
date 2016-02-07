@@ -24,8 +24,6 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import io.github.carlorodriguez.alarmon.NotificationServiceInterface;
-
 public class NotificationServiceBinder {
   private Context context;
   private NotificationServiceInterface notify;

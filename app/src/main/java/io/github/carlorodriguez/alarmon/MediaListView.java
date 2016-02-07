@@ -134,7 +134,7 @@ public class MediaListView extends ListView implements OnItemClickListener {
     }
 
     Cursor dbCursor = getContext().getContentResolver().query(
-        contentUri, queryColumns.toArray(new String[] {}),
+        contentUri, queryColumns.toArray(new String[queryColumns.size()]),
         selection, null, sortOrder);
     if (staticCursor != null) {
       Cursor[] cursors = new Cursor[] { staticCursor, dbCursor };
@@ -147,7 +147,7 @@ public class MediaListView extends ListView implements OnItemClickListener {
     this.contentUri = contentUri;
 
     final SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-        getContext(), rowResId, cursor, displayColumns, resIDs);
+        getContext(), rowResId, cursor, displayColumns, resIDs, 1);
     // Use a custom binder to highlight the selected element.
     adapter.setViewBinder(new ViewBinder() {
       @Override

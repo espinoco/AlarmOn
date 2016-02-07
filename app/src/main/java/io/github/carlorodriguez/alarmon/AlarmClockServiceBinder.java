@@ -23,8 +23,6 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import io.github.carlorodriguez.alarmon.AlarmClockInterface;
-
 /**
  * This class is a wrapper for the process of binding to the AlarmClockService.
  * It provides a seemingly synchronous semantic for the asynchronous binding

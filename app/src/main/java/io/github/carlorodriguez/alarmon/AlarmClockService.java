@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -56,7 +57,8 @@ public final class AlarmClockService extends Service {
         "android.permission.WRITE_EXTERNAL_STORAGE", getPackageName()) ==
           PackageManager.PERMISSION_GRANTED) {
       Thread.setDefaultUncaughtExceptionHandler(
-          new LoggingUncaughtExceptionHandler("/sdcard"));
+          new LoggingUncaughtExceptionHandler(
+                  Environment.getExternalStorageDirectory().getPath()));
     }
 
     // Access to in-memory and persistent data structures.
@@ -71,26 +73,28 @@ public final class AlarmClockService extends Service {
       if (AppSettings.isDebugMode(getApplicationContext())) {
         Toast.makeText(getApplicationContext(), "RENABLE " + alarmId, Toast.LENGTH_SHORT).show();
       }
-      pendingAlarms.put(alarmId, db.readAlarmInfo(alarmId).getTime());
+
+        AlarmTime alarmTime = null;
+
+        AlarmInfo info = db.readAlarmInfo(alarmId);
+
+        if (info != null) {
+            alarmTime = info.getTime();
+        }
+
+      pendingAlarms.put(alarmId, alarmTime);
     }
 
     ReceiverNotificationRefresh.startRefreshing(getApplicationContext());
   }
 
-  // OnStart was depreciated in SDK 5.  It is here for backwards compatibility.
-  // http://android-developers.blogspot.com/2010/02/service-api-changes-starting-with.html
-  @Override
-  public void onStart(Intent intent, int startId) {
-    handleStart(intent, startId);
-  }
-
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    handleStart(intent, startId);
+    handleStart(intent);
     return START_STICKY;
   }
 
-  private void handleStart(Intent intent, int startId) {
+  private void handleStart(Intent intent) {
     if (intent != null && intent.hasExtra(COMMAND_EXTRA)) {
       Bundle extras = intent.getExtras();
       int command = extras.getInt(COMMAND_EXTRA, COMMAND_UNKNOWN);
