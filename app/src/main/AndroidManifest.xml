@@ -20,6 +20,7 @@
       android:label="@string/app_name">
     <activity
         android:name="io.github.carlorodriguez.alarmon.ActivityAlarmClock"
+        android:theme="@style/Theme.AppCompat"
         android:launchMode="singleTask">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -39,6 +40,7 @@
         android:finishOnTaskLaunch="true"/>
     <activity
         android:name="io.github.carlorodriguez.alarmon.ActivityPendingAlarms"
+        android:theme="@style/Theme.AppCompat"
         android:finishOnTaskLaunch="true"/>
     <service android:name="io.github.carlorodriguez.alarmon.AlarmClockService"/>
     <service android:name="io.github.carlorodriguez.alarmon.NotificationService"/>

@@ -17,12 +17,12 @@ package io.github.carlorodriguez.alarmon;
 
 import java.util.Calendar;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.MotionEvent;

@@ -15,7 +15,6 @@
 
 package io.github.carlorodriguez.alarmon;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -23,6 +22,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -30,7 +30,7 @@ import android.widget.ListView;
  * This is a simple activity which displays all of the scheduled (in memory)
  * alarms that currently exist (For debugging only).
  */
-public final class ActivityPendingAlarms extends Activity {
+public final class ActivityPendingAlarms extends AppCompatActivity {
   boolean connected;
   private ListView listView;
 
@@ -38,6 +38,8 @@ public final class ActivityPendingAlarms extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.pending_alarms);
+
+    setTitle(R.string.pending_alarms);
 
     connected = false;
     listView = (ListView) findViewById(R.id.pending_alarm_list);

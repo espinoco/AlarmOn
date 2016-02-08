@@ -17,8 +17,6 @@ package io.github.carlorodriguez.alarmon;
 
 import java.util.Calendar;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -27,6 +25,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +44,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * clicking on the clock will trigger a dialog for enabling/disabling 'debug
  * mode.'
  */
-public final class ActivityAlarmClock extends Activity {
+public final class ActivityAlarmClock extends AppCompatActivity {
 
     public static final int TIME_PICKER = 0;
     public static final int DELETE_CONFIRM = 1;
