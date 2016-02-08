@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -29,7 +28,11 @@ import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -55,7 +58,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * being edited.  AlarmSettings.DEFAULT_SETTINGS_ID can be used to edit the
  * default settings.
  */
-public final class ActivityAlarmSettings extends Activity {
+public final class ActivityAlarmSettings extends AppCompatActivity {
   public static final String EXTRAS_ALARM_ID = "alarm_id";
   private static final int MISSING_EXTRAS = -69;
 
@@ -148,16 +151,6 @@ public final class ActivityAlarmSettings extends Activity {
       }
     });
 
-    // Delete button.  Simply opens a confirmation dialog (which does the
-    // actual delete).
-    Button deleteButton = (Button) findViewById(R.id.settings_delete);
-    deleteButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        showDialogFragment(DELETE_CONFIRM);
-      }
-    });
-
     // Setup the list of settings.  Each setting is represented by a Setting
     // object.  Create one here for each setting type.
     final ArrayList<Setting> settingsObjects =
@@ -244,12 +237,36 @@ public final class ActivityAlarmSettings extends Activity {
     settingsAdapter = new SettingsAdapter(getApplicationContext(), settingsObjects);
     settingsList.setAdapter(settingsAdapter);
     settingsList.setOnItemClickListener(new SettingsListClickListener());
-
-    // The delete button should not be shown when editing the default settings.
-    if (alarmId == AlarmSettings.DEFAULT_SETTINGS_ID) {
-      deleteButton.setVisibility(View.GONE);
-    }
   }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (alarmId == AlarmSettings.DEFAULT_SETTINGS_ID) {
+            return super.onCreateOptionsMenu(menu);
+        } else {
+            MenuInflater inflater = getMenuInflater();
+
+            inflater.inflate(R.menu.alarm_settings_menu, menu);
+
+            return true;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (alarmId == AlarmSettings.DEFAULT_SETTINGS_ID) {
+            return super.onOptionsItemSelected(item);
+        } else {
+            switch (item.getItemId()) {
+                case R.id.action_delete_alarm:
+                    showDialogFragment(DELETE_CONFIRM);
+
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        }
+    }
 
   @Override
   protected void onResume() {

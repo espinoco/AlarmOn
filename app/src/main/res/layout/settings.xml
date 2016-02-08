@@ -28,9 +28,4 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content" />
   </LinearLayout>
-
-  <Button android:text="@string/delete"
-    android:id="@+id/settings_delete"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content" />
 </LinearLayout>

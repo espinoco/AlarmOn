@@ -32,6 +32,7 @@
         android:screenOrientation="portrait"/>
     <activity
         android:name="io.github.carlorodriguez.alarmon.ActivityAlarmSettings"
+        android:theme="@style/Theme.AppCompat"
         android:finishOnTaskLaunch="true"/>
     <activity
         android:name="io.github.carlorodriguez.alarmon.ActivityAppSettings"
