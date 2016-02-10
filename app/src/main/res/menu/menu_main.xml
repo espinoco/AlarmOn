@@ -1,0 +1,33 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <item
+      android:id="@+id/action_add_alarm"
+      android:title="@string/add_alarm"
+      android:orderInCategory="1"
+      app:showAsAction="ifRoom"
+      android:icon="@drawable/ic_menu_add"
+      />
+
+  <item
+      android:id="@+id/action_delete_all"
+      android:title="@string/delete_all"
+      android:orderInCategory="2"
+      app:showAsAction="never"
+      />
+
+  <item
+      android:id="@+id/action_default_settings"
+      android:title="@string/default_settings"
+      android:orderInCategory="3"
+      app:showAsAction="never"
+      />
+
+  <item
+      android:id="@+id/action_app_settings"
+      android:title="@string/app_settings"
+      android:orderInCategory="4"
+      app:showAsAction="never"
+      />
+
+</menu>

@@ -15,8 +15,6 @@
 
 package io.github.carlorodriguez.alarmon;
 
-import java.util.Calendar;
-
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -30,12 +28,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+
+import java.util.Calendar;
 
 /**
  * This is the main Activity for the application.  It contains a ListView
@@ -50,15 +47,13 @@ public final class ActivityAlarmClock extends AppCompatActivity {
     public static final int DELETE_CONFIRM = 1;
     public static final int DELETE_ALARM_CONFIRM = 2;
 
-    private enum Menus { DELETE_ALL, DEFAULT_ALARM_SETTINGS, APP_SETTINGS }
+    public static final int ACTION_TEST_ALARM = 0;
+    public static final int ACTION_PENDING_ALARMS = 1;
 
     private static AlarmClockServiceBinder service;
     private NotificationServiceBinder notifyService;
     private DbAccessor db;
     private static AlarmViewAdapter adapter;
-    private TextView clock;
-    private Button testBtn;
-    private Button pendingBtn;
     private Handler handler;
     private Runnable tickCallback;
 
@@ -77,48 +72,6 @@ public final class ActivityAlarmClock extends AppCompatActivity {
 
         notifyService = new NotificationServiceBinder(getApplicationContext());
 
-        // Setup individual UI elements.
-        // A simple clock.
-        clock = (TextView) findViewById(R.id.clock);
-
-        // Used in debug mode.  Schedules an alarm for 5 seconds in the future
-        // when clicked.
-        testBtn = (Button) findViewById(R.id.test_alarm);
-
-        testBtn.setOnClickListener(new OnClickListener() {
-            public void onClick(View view) {
-                final Calendar testTime = Calendar.getInstance();
-
-                testTime.add(Calendar.SECOND, 5);
-
-                service.createAlarm(new AlarmTime(
-                                testTime.get(Calendar.HOUR_OF_DAY),
-                                testTime.get(Calendar.MINUTE),
-                                testTime.get(Calendar.SECOND)));
-
-                adapter.requery();
-            }
-        });
-
-        // Displays a list of pending alarms (only visible in debug mode).
-        pendingBtn = (Button) findViewById(R.id.pending_alarms);
-
-        pendingBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),
-                                ActivityPendingAlarms.class));
-            }
-        });
-
-        // Opens the time picker dialog and allows the user to schedule a new alarm.
-        Button addBtn = (Button) findViewById(R.id.add_alarm);
-
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                showDialogFragment(TIME_PICKER);
-            }
-        });
 
         // Setup the alarm list and the underlying adapter. Clicking an individual
         // item will start the settings activity.
@@ -131,7 +84,7 @@ public final class ActivityAlarmClock extends AppCompatActivity {
         alarmList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view,
-                    int position, long id) {
+                                    int position, long id) {
                 final AlarmInfo info = (AlarmInfo)
                         adapter.getItemAtPosition(position);
 
@@ -182,6 +135,8 @@ public final class ActivityAlarmClock extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        invalidateOptionsMenu();
 
         service.bind();
 
@@ -239,32 +194,27 @@ public final class ActivityAlarmClock extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem delete_all = menu.add(0, Menus.DELETE_ALL.ordinal(), 0,
-                R.string.delete_all);
+        if (AppSettings.isDebugMode(getApplicationContext())) {
+            menu.add(Menu.NONE, ACTION_TEST_ALARM, 5, R.string.test_alarm);
 
-        delete_all.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+            menu.add(Menu.NONE, ACTION_PENDING_ALARMS, 6, R.string.pending_alarms);
+        }
 
-        MenuItem alarm_settings = menu.add(0,
-                Menus.DEFAULT_ALARM_SETTINGS.ordinal(), 0,
-                R.string.default_settings);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        alarm_settings.setIcon(android.R.drawable.ic_lock_idle_alarm);
-
-        MenuItem app_settings = menu.add(0, Menus.APP_SETTINGS.ordinal(), 0,
-                R.string.app_settings);
-
-        app_settings.setIcon(android.R.drawable.ic_menu_preferences);
-
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (Menus.values()[item.getItemId()]) {
-            case DELETE_ALL:
+        switch (item.getItemId()) {
+            case R.id.action_add_alarm:
+                showDialogFragment(TIME_PICKER);
+                break;
+            case R.id.action_delete_all:
                 showDialogFragment(DELETE_CONFIRM);
                 break;
-            case DEFAULT_ALARM_SETTINGS:
+            case R.id.action_default_settings:
                 Intent alarm_settings = new Intent(getApplicationContext(),
                         ActivityAlarmSettings.class);
 
@@ -273,13 +223,33 @@ public final class ActivityAlarmClock extends AppCompatActivity {
 
                 startActivity(alarm_settings);
                 break;
-            case APP_SETTINGS:
+            case R.id.action_app_settings:
                 Intent app_settings = new Intent(getApplicationContext(),
                         ActivityAppSettings.class);
 
                 startActivity(app_settings);
                 break;
+            case ACTION_TEST_ALARM:
+                // Used in debug mode.  Schedules an alarm for 5 seconds in the future
+                // when clicked.
+                final Calendar testTime = Calendar.getInstance();
+
+                testTime.add(Calendar.SECOND, 5);
+
+                service.createAlarm(new AlarmTime(
+                        testTime.get(Calendar.HOUR_OF_DAY),
+                        testTime.get(Calendar.MINUTE),
+                        testTime.get(Calendar.SECOND)));
+
+                adapter.requery();
+                break;
+            case ACTION_PENDING_ALARMS:
+                // Displays a list of pending alarms (only visible in debug mode).
+                startActivity(new Intent(getApplicationContext(),
+                        ActivityPendingAlarms.class));
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -298,29 +268,8 @@ public final class ActivityAlarmClock extends AppCompatActivity {
     }
 
     private void redraw() {
-        // Show/hide debug buttons.
-        if (AppSettings.isDebugMode(getApplicationContext())) {
-            testBtn.setVisibility(View.VISIBLE);
-
-            pendingBtn.setVisibility(View.VISIBLE);
-        } else {
-            testBtn.setVisibility(View.GONE);
-
-            pendingBtn.setVisibility(View.GONE);
-        }
-
         // Recompute expiration times in the list view
         adapter.notifyDataSetChanged();
-
-        // Update clock
-        Calendar c = Calendar.getInstance();
-
-        AlarmTime time = new AlarmTime(
-                c.get(Calendar.HOUR_OF_DAY),
-                c.get(Calendar.MINUTE),
-                c.get(Calendar.SECOND));
-
-        clock.setText(time.localizedString(getApplicationContext()));
     }
 
     public static class ActivityDialogFragment extends DialogFragment {
