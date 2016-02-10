@@ -210,7 +210,7 @@ public class NotificationService extends Service {
 
           Notification notification = builder
                   .setContentIntent(notificationActivity)
-                  .setSmallIcon(R.drawable.alarmclock_notification)
+                  .setSmallIcon(R.drawable.ic_stat_notify_alarm)
                   .setContentTitle(notifyText)
                   .setContentText("")
                   .build();

@@ -159,7 +159,7 @@ public final class AlarmClockService extends Service {
 
       Notification notification = builder
               .setContentIntent(launch)
-              .setSmallIcon(R.drawable.alarmclock_notification)
+              .setSmallIcon(R.drawable.ic_stat_notify_alarm)
               .setContentTitle(getString(R.string.app_name))
               .setContentText(nextString)
               .build();
