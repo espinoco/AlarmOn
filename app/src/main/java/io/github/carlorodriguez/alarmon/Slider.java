@@ -78,7 +78,7 @@ public class Slider extends ViewGroup {
 
     // Setup the object which will be slid.
     dot = new ImageView(getContext());
-    dot.setImageResource(R.drawable.slider_icon);
+    dot.setImageResource(R.drawable.ic_forward);
     dot.setBackgroundResource(R.drawable.slider_btn);
     dot.setScaleType(ScaleType.CENTER);
     dot.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
