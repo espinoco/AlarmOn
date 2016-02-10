@@ -15,7 +15,6 @@
 
 package io.github.carlorodriguez.alarmon;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -25,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -39,7 +39,7 @@ import android.widget.TextView;
  * more than once at the same time. (ie, it assumes
  * android:launchMode="singleInstance" is set in the manifest file).
  */
-public final class ActivityAlarmNotification extends Activity {
+public final class ActivityAlarmNotification extends AppCompatActivity {
 
     public static final String TIMEOUT_COMMAND = "timeout";
 
