@@ -10,10 +10,12 @@
     android:paddingBottom="25dp"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
-  <TextView android:id="@+id/time_value"
+  <io.github.carlorodriguez.alarmon.TimeEditText
+    android:id="@+id/time_value"
     android:textSize="24sp"
     android:gravity="center"
     android:maxLength="2"
+    android:inputType="number"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
   <Button android:id="@+id/time_minus"

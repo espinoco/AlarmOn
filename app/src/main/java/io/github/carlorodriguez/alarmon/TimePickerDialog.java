@@ -203,7 +203,7 @@ public final class TimePickerDialog extends AlertDialog {
   private final class PickerView {
     private int calendarField;
     private String formatString;
-    private TextView text = null;
+    private TimeEditText text = null;
     private Increment increment = null;
     private Button incrementValueButton = null;
     private Button plus = null;
@@ -230,7 +230,7 @@ public final class TimePickerDialog extends AlertDialog {
     public void inflate(View parentView, int resourceId, boolean showIncrement, IncrementValue defaultIncrement) {
       final ViewStub stub = (ViewStub) parentView.findViewById(resourceId);
       final View view = stub.inflate();
-      text = (TextView) view.findViewById(R.id.time_value);
+      text = (TimeEditText) view.findViewById(R.id.time_value);
       text.setOnFocusChangeListener(new TextChangeListener());
       text.setOnEditorActionListener(new TextChangeListener());
 
