@@ -387,15 +387,22 @@ public final class TimePickerDialog extends AlertDialog {
         try {
           int newValue = Integer.parseInt(text.getText().toString());
           if (calendarField == Calendar.HOUR &&
-              newValue == 12 &&
+              newValue >= 12 &&
               calendar.get(Calendar.AM_PM) == Calendar.AM) {
             calendar.set(Calendar.HOUR_OF_DAY, 0);
           } else if (calendarField == Calendar.HOUR &&
-              newValue == 12 &&
+              newValue >= 12 &&
               calendar.get(Calendar.AM_PM) == Calendar.PM) {
             calendar.set(Calendar.HOUR_OF_DAY, 12);
           } else {
-            calendar.set(calendarField, newValue);
+              if (calendarField == Calendar.HOUR_OF_DAY && newValue >= 24) {
+                  calendar.set(calendarField, 0);
+              } else if (calendarField == Calendar.MINUTE
+                      && newValue >= 60) {
+                  calendar.set(calendarField, 59);
+              } else {
+                  calendar.set(calendarField, newValue);
+              }
           }
         } catch (NumberFormatException e) {
           e.printStackTrace();
