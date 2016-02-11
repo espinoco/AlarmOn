@@ -11,8 +11,9 @@
       android:layout_width="0dp"
       android:layout_height="wrap_content" />
     <EditText android:id="@+id/volume_start"
-      android:inputType="phone"
+      android:inputType="number"
       android:digits="0123456789"
+      android:maxLength="3"
       android:imeOptions="actionNext"
       android:gravity="end"
       android:width="55sp"
@@ -26,8 +27,9 @@
       android:layout_width="0dp"
       android:layout_height="wrap_content" />
     <EditText android:id="@+id/volume_end"
-      android:inputType="phone"
+      android:inputType="number"
       android:digits="0123456789"
+      android:maxLength="3"
       android:imeOptions="actionNext"
       android:gravity="end"
       android:width="55sp"
@@ -41,8 +43,9 @@
       android:layout_width="0dp"
       android:layout_height="wrap_content" />
     <EditText android:id="@+id/volume_duration"
-      android:inputType="phone"
+      android:inputType="number"
       android:digits="0123456789"
+      android:maxLength="3"
       android:imeOptions="actionDone"
       android:gravity="end"
       android:width="55sp"
