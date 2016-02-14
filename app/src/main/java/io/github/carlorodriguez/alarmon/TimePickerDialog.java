@@ -126,7 +126,7 @@ public final class TimePickerDialog extends AlertDialog {
     // Set title and icon.
     if (title.length() != 0) {
       setTitle(title);
-      setIcon(R.drawable.ic_dialog_time);
+        setIconAttribute(R.attr.customTimeIcon);
     }
 
     // Set the view for the body section of the AlertDialog.

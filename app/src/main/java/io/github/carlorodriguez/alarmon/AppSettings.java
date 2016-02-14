@@ -15,6 +15,7 @@
 
 package io.github.carlorodriguez.alarmon;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -32,6 +33,7 @@ public final class AppSettings {
   public static final String CUSTOM_LOCK_SCREEN_TEXT = "CUSTOM_LOCK_SCREEN";
   public static final String CUSTOM_LOCK_SCREEN_PERSISTENT = "CUSTOM_LOCK_PERSISTENT";
   public static final String ALARM_TIMEOUT = "ALARM_TIMEOUT";
+    public static final String APP_THEME_KEY = "APP_THEME_KEY";
 
   public static boolean displayNotificationIcon(Context c) {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
@@ -134,4 +136,21 @@ public final class AppSettings {
       return 10;
     }
   }
+
+    public static void setTheme(Context context, Activity activity) {
+        SharedPreferences sharedPref = PreferenceManager.
+                getDefaultSharedPreferences(context);
+
+        String theme = sharedPref.getString(APP_THEME_KEY, "0");
+
+        switch (theme) {
+            case "1":
+                activity.setTheme(R.style.AppThemeLight);
+                break;
+            case "2":
+                activity.setTheme(R.style.AppThemeLightDarkActionBar);
+                break;
+        }
+    }
+
 }

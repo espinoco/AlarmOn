@@ -6,7 +6,7 @@
       android:title="@string/delete"
       android:orderInCategory="10"
       app:showAsAction="always"
-      android:icon="@drawable/ic_menu_delete"
+      android:icon="?attr/customDeleteIcon"
       />
 
 </menu>

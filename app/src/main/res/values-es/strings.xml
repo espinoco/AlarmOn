@@ -88,4 +88,10 @@
   <string name="time_out_title">Apagado de alarma</string>
   <string name="time_out_error">ADVERTENCIA: Esta alarma ha agotado su tiempo de espera y ha sido desactivada.</string>
   <string name="time_out_summary">La alarma será automaticamente descartarda luego de estos minutos.</string>
+  <string name="app_theme_title">Apariencia</string>
+  <string name="app_theme_summary">Cambiar los colores</string>
+  <string name="themes">Temas</string>
+  <string name="dark">Oscuro</string>
+  <string name="light">Luz</string>
+  <string name="dark_light">Oscuro y luz</string>
 </resources>

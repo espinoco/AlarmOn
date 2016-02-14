@@ -90,6 +90,8 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+      AppSettings.setTheme(getBaseContext(), ActivityAlarmSettings.this);
+
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.settings);

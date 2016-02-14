@@ -20,9 +20,11 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -55,6 +57,20 @@ public final class ActivityAlarmNotification extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences sharedPref = PreferenceManager.
+                getDefaultSharedPreferences(getBaseContext());
+
+        String theme = sharedPref.getString(AppSettings.APP_THEME_KEY, "0");
+
+        switch (theme) {
+            case "1":
+                setTheme(R.style.AppThemeLightNoActionBar);
+                break;
+            case "2":
+                setTheme(R.style.AppThemeLightNoActionBar);
+                break;
+        }
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.notification);

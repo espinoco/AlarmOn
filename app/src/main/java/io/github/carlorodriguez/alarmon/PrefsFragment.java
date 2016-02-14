@@ -35,7 +35,8 @@ import android.widget.EditText;
  * Simple preferences fragment to display/manage the shared preferences
  * that make up the global application settings.
  */
-public class PrefsFragment extends PreferenceFragment {
+public class PrefsFragment extends PreferenceFragment implements
+        Preference.OnPreferenceChangeListener {
 
     private static final int CUSTOM_LOCK_SCREEN = 0;
 
@@ -71,6 +72,23 @@ public class PrefsFragment extends PreferenceFragment {
         notification_icon.setOnPreferenceChangeListener(refreshListener);
         final Preference lock_screen = findPreference(AppSettings.LOCK_SCREEN);
         lock_screen.setOnPreferenceChangeListener(refreshListener);
+
+        final Preference appTheme = findPreference(AppSettings.APP_THEME_KEY);
+
+        appTheme.setOnPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        if (preference.getKey().equals(AppSettings.APP_THEME_KEY)) {
+            ActivityAlarmClock.activityAlarmClock.finish();
+
+            getActivity().finish();
+
+            startActivity(new Intent(getActivity(), ActivityAlarmClock.class));
+        }
+
+        return true;
     }
 
     public static class ActivityDialogFragment extends DialogFragment {

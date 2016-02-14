@@ -26,6 +26,8 @@ public class ActivityAppSettings extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppSettings.setTheme(getBaseContext(), ActivityAppSettings.this);
+
         super.onCreate(savedInstanceState);
 
         getFragmentManager().beginTransaction().replace(android.R.id.content,

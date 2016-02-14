@@ -36,6 +36,8 @@ public final class ActivityPendingAlarms extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    AppSettings.setTheme(getBaseContext(), ActivityPendingAlarms.this);
+
     super.onCreate(savedInstanceState);
     setContentView(R.layout.pending_alarms);
 

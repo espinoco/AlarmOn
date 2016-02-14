@@ -89,4 +89,10 @@
   <string name="time_out_summary">A firing alarm will be automatically dismissed after this many minutes.</string>
   <string name="pending_alarms">Pending Alarms</string>
   <string name="test_alarm">Test Alarm</string>
+  <string name="app_theme_title">Appearance</string>
+  <string name="app_theme_summary">Change the app colors</string>
+  <string name="themes">Themes</string>
+  <string name="dark">Dark</string>
+  <string name="light">Light</string>
+  <string name="dark_light">Dark Light</string>
 </resources>

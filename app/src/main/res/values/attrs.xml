@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <declare-styleable name="customAttrs">
+    <attr name="customAddIcon" format="reference" />
+    <attr name="customDeleteIcon" format="reference" />
+    <attr name="customSettingsItemTitle" format="reference" />
+    <attr name="customTimeIcon" format="reference" />
+    <attr name="customDivider" format="reference" />
+  </declare-styleable>
+</resources>

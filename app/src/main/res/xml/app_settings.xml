@@ -25,6 +25,19 @@
     android:entryValues="@array/time_out_values"
     android:defaultValue="10" />
 
+  <ListPreference
+      android:persistent="true"
+      android:key="APP_THEME_KEY"
+      android:title="@string/app_theme_title"
+      android:dialogTitle="@string/themes"
+      android:summary="@string/app_theme_summary"
+      android:entries="@array/app_themes"
+      android:entryValues="@array/app_themes_values"
+      android:defaultValue="0"
+      >
+
+  </ListPreference>
+
   <ListPreference android:persistent="true"
     android:key="DEBUG_MODE"
     android:title="@string/debug_mode_title"

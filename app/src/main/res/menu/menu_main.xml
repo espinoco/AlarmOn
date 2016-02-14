@@ -6,7 +6,7 @@
       android:title="@string/add_alarm"
       android:orderInCategory="1"
       app:showAsAction="ifRoom"
-      android:icon="@drawable/ic_menu_add"
+      android:icon="?attr/customAddIcon"
       />
 
   <item

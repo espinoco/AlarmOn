@@ -50,6 +50,8 @@ public final class ActivityAlarmClock extends AppCompatActivity {
     public static final int ACTION_TEST_ALARM = 0;
     public static final int ACTION_PENDING_ALARMS = 1;
 
+    public static ActivityAlarmClock activityAlarmClock;
+
     private static AlarmClockServiceBinder service;
     private NotificationServiceBinder notifyService;
     private DbAccessor db;
@@ -59,9 +61,13 @@ public final class ActivityAlarmClock extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppSettings.setTheme(getBaseContext(), ActivityAlarmClock.this);
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.alarm_list);
+
+        activityAlarmClock = this;
 
         // Access to in-memory and persistent data structures.
         service = new AlarmClockServiceBinder(getApplicationContext());
@@ -190,6 +196,8 @@ public final class ActivityAlarmClock extends AppCompatActivity {
         super.onDestroy();
 
         db.closeConnections();
+
+        activityAlarmClock = null;
     }
 
     @Override
