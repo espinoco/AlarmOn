@@ -21,6 +21,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -71,7 +72,12 @@ public class PrefsFragment extends PreferenceFragment implements
         final Preference notification_icon = findPreference(AppSettings.NOTIFICATION_ICON);
         notification_icon.setOnPreferenceChangeListener(refreshListener);
         final Preference lock_screen = findPreference(AppSettings.LOCK_SCREEN);
-        lock_screen.setOnPreferenceChangeListener(refreshListener);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getPreferenceScreen().removePreference(lock_screen);
+        } else {
+            lock_screen.setOnPreferenceChangeListener(refreshListener);
+        }
 
         final Preference appTheme = findPreference(AppSettings.APP_THEME_KEY);
 
