@@ -10,7 +10,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  ****************************************************************************/
 
 package io.github.carlorodriguez.alarmon;
@@ -69,7 +69,19 @@ public final class PendingAlarmList {
     // Previous instances of this intent will be overwritten in
     // the alarm manager.
 
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+          Intent intent = new Intent(context, ActivityAlarmClock.class);
+
+          PendingIntent showIntent = PendingIntent.getActivity(context, 0,
+                  intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+          AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.
+                  AlarmClockInfo(time.calendar().getTimeInMillis(),
+                  showIntent
+                  );
+
+          alarmManager.setAlarmClock(alarmClockInfo, scheduleIntent);
+      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
           alarmManager.setExact(AlarmManager.RTC_WAKEUP,
                   time.calendar().getTimeInMillis(), scheduleIntent);
       } else {
