@@ -15,6 +15,10 @@ Alarm On is a fork of
 
 * Keep alive and actualized this awesome app.
 
+# Debug mode
+
+There is a debug mode for the debug build type on application settings.
+
 # FAQ
 
 ### What's a fork?

@@ -83,6 +83,11 @@ public class PrefsFragment extends PreferenceFragment implements
         final Preference appTheme = findPreference(AppSettings.APP_THEME_KEY);
 
         appTheme.setOnPreferenceChangeListener(this);
+
+        if (!BuildConfig.DEBUG) {
+            getPreferenceScreen().removePreference(
+                    findPreference(AppSettings.DEBUG_MODE));
+        }
     }
 
     @Override
