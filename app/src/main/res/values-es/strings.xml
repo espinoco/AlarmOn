@@ -94,4 +94,9 @@
   <string name="dark">Oscuro</string>
   <string name="light">Luz</string>
   <string name="dark_light">Oscuro y luz</string>
+  <string name="read_external_storage_title">Leer archivos</string>
+  <string name="read_external_storage_message">Necesitamos su permiso para leer los archivos de audio para que pueda establecer sus propios tonos de alarma.</string>
+  <string name="grant">Conceder</string>
+  <string name="permission_not_granted">Lo sentimos, no podemos acceder a esta funcionalidad hasta que nos conceda su permiso.</string>
+  <string name="permission_not_granted_title">Sin permiso</string>
 </resources>

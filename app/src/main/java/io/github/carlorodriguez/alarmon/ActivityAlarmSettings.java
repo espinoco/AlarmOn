@@ -19,14 +19,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -61,6 +65,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public final class ActivityAlarmSettings extends AppCompatActivity {
   public static final String EXTRAS_ALARM_ID = "alarm_id";
   private static final int MISSING_EXTRAS = -69;
+    private static final int READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 0;
 
   private enum SettingType {
     TIME,
@@ -78,6 +83,8 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
     public static final int SNOOZE_PICKER = 4;
     public static final int VOLUME_FADE_PICKER = 5;
     public static final int DELETE_CONFIRM = 6;
+    public static final int EXPLAIN_READ_EXTERNAL_STORAGE = 7;
+    public static final int PERMISSION_NOT_GRANTED = 8;
 
   private static long alarmId;
   private static AlarmClockServiceBinder service;
@@ -288,6 +295,33 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
     db.closeConnections();
   }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+            @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == READ_EXTERNAL_STORAGE_PERMISSION_REQUEST) {
+            if (permissions.length == 1 &&
+                    permissions[0].equals(
+                            Manifest.permission.READ_EXTERNAL_STORAGE)
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showDialogFragment(TONE_PICKER);
+            } else {
+                showDialogFragment(PERMISSION_NOT_GRANTED);
+            }
+        }
+    }
+
+    public void requestReadExternalStoragePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            showDialogFragment(EXPLAIN_READ_EXTERNAL_STORAGE);
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[] {
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    }, READ_EXTERNAL_STORAGE_PERMISSION_REQUEST);
+        }
+    }
+
   /**
    * This is a helper class for mapping SettingType to action.  Each Setting
    * in the list view returns a unique SettingType.  Trigger a dialog
@@ -312,7 +346,13 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
           break;
 
         case TONE:
-          showDialogFragment(TONE_PICKER);
+            if (ContextCompat.checkSelfPermission(ActivityAlarmSettings.this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                showDialogFragment(TONE_PICKER);
+            } else {
+                requestReadExternalStoragePermission();
+            }
           break;
 
         case SNOOZE:
@@ -546,6 +586,53 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
                   }
               });
               return deleteConfirmBuilder.create();
+        case EXPLAIN_READ_EXTERNAL_STORAGE:
+            final AlertDialog.Builder builder = new AlertDialog.Builder(
+                    getActivity());
+
+            builder.setTitle(R.string.read_external_storage_title);
+
+            builder.setMessage(R.string.read_external_storage_message);
+
+            builder.setPositiveButton(R.string.grant,
+                    new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dismiss();
+
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                            }, READ_EXTERNAL_STORAGE_PERMISSION_REQUEST);
+                }
+            });
+
+            builder.setNegativeButton(R.string.cancel,
+                    new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dismiss();
+                }
+            });
+
+            return builder.create();
+        case PERMISSION_NOT_GRANTED:
+            final AlertDialog.Builder permissionBuilder = new AlertDialog.Builder(
+                    getActivity());
+
+            permissionBuilder.setTitle(R.string.permission_not_granted_title);
+
+            permissionBuilder.setMessage(R.string.permission_not_granted);
+
+            permissionBuilder.setPositiveButton(R.string.ok,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dismiss();
+                        }
+                    });
+
+            return permissionBuilder.create();
         default:
           return super.onCreateDialog(savedInstanceState);
       }
