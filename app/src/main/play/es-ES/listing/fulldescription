@@ -1,0 +1,43 @@
+AlarmOn es una alarma completa, con diferentes temas de colores,
+notificaciones con el tiempo antes de que la siguiente alarma se
+active, etiquetas para tus alarmas, selección de archivos de audio
+locales para tonos de alarma, dormitar, apagar y encender vibración,
+habilidad para establecer aumento de volumen gradual con el tiempo
+personalizado cuando la alarma se activa, funcionalidad para
+establecer el tiempo de la alarma con el teclado, muestra una etiqueta
+con el tiempo que indica cuanto falta para que la siguiente alarma se
+active, escoger días de repetición para tus alarmas.
+
+AlarmOn está destinado para todos, es totalmente gratuito, no tiene
+anuncios, ni compras integradas, no realiza espionaje y es desarrollado por
+apasionados voluntarios. Todo el código fuente está disponible
+libremente.
+
+Permisos
+-----------
+AlarmOn necesita acceso a:
+• Evitar que el dispositivo entre en estado de inactividad
+• Ejecutarse al inicio
+• Controlar la vibración
+• Modificar la configuración del sistema
+• Leer almacenamiento externo
+
+Detalles de permisos:
+• Necesita "Evitar que el dispositivo entre en estado de inactividad"
+para mantener la pantalla encendida cuando una alarma se activa.
+• Necesita "Ejecutarse al inicio" para recrear las alarmas que
+existieron antes de que vuestro teléfono se apagara.
+• Necesita "Controlar la vibración" para hacer vibrar vuestro teléfono.
+• Necesita "Modificar la configuración del sistema" para poder establecer un texto
+personalizado en la pantalla de bloqueo (característica sólo
+disponible para dispositivos Android con versiones menores a Lollipop).
+• Necesita "Leer almacenamiento externo" para leer los archivos de audio
+para de que esta manera pueda establecer vuestros propios tonos de alarma.
+
+Dónde están las funcionalidades para despertar como resolver problemas
+matemáticos, tomar fotos o algo parecido eso para descartar la alarma?
+-----------
+Creemos que los despertadores son solo herramientas, el responsable de
+despertarte cuando deseas eres tú mismo. Cada persona es diferente
+pero podemos sugerir una manera de tratar con este asunto y es
+llamado: desarrollo personal.

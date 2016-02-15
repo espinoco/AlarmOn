@@ -1,0 +1,41 @@
+AlarmOn is a full alarm clock, with different color themes, icon
+notifications with remaining time until next alarm gets activated,
+name labels for your alarms, tone selection from your local audio
+files, snooze, vibration on/off selection, ability to set custom
+volume increase over time when an alarm gets activated, feature to set
+the time with your keyboard, shows a label with the time remaining
+until the next alarm gets activated, choose repeating days for your
+alarms.
+
+AlarmOn is intended for everyone, is totally free, has no ads, no
+in-app-purchases, no spying and is developed by passionate
+volunteers. All the source code is available for free.
+
+Permissions
+-----------
+AlarmOn needs access to:
+• Wake lock
+• Receive boot completed
+• Vibrate
+• Write settings
+• Read external storage
+
+Permission Details:
+• It needs "Wake lock" for keeping the screen turned on when an alarm
+gets activated.
+• It needs "Receive boot completed" to recreate the alarms that
+existed before you turn your phone off.
+• It needs "Vibrate" to make your device vibrate.
+• It needs "Write settings" to be able to set a custom text on the
+lock screen (feature only available for devices running Android
+versions below Lollipop).
+• It needs "Read external storage", in to order to read your media
+files so you can set your own alarm tone.
+
+Where are the waking up features like solve math problems, take
+pictures or anything like that to discard the alarm?
+-----------
+We believe alarm clocks are just tools, the responsible for waking you
+up when you desire is yourself, every person is different but we can
+suggest a way of dealing with this and it's called: personal
+development.

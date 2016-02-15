@@ -8,6 +8,7 @@
 .DS_Store
 Thumbs.db
 *~
+key.p12
 
 # gnu global
 /GPATH
