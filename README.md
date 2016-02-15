@@ -1,6 +1,6 @@
-# Alarm On
+# AlarmOn
 
-Alarm On is a fork of
+AlarmOn is a fork of
 [Alarm Klock](https://code.google.com/p/kraigsandroid/) by [kraigsandroid](https://github.com/kraigs-android).
 
 # Objectives

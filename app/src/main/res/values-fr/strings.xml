@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Translation by Biljana Milicevic <engr3337@gmail.com> -->
 <resources>
-  <string name="app_name">Alarm On</string>
+  <string name="app_name">AlarmOn</string>
   <string name="add_alarm">Ajouter un alarme</string>
   <string name="default_settings">Paramètres par défaut d\'alarme</string>
   <string name="app_settings">Paramètres de l\'application</string>
