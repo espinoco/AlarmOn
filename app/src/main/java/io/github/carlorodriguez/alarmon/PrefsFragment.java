@@ -18,6 +18,7 @@ package io.github.carlorodriguez.alarmon;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,7 +52,7 @@ public class PrefsFragment extends PreferenceFragment implements
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 // Clear the lock screen text if the user disables the feature.
                 if (preference.getKey().equals(AppSettings.LOCK_SCREEN)) {
-                    Settings.System.putString(getActivity().getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, "");
+                    clearLockScreenText(getActivity());
 
                     final String custom_lock_screen = getResources().getStringArray(R.array.lock_screen_values)[4];
                     if (newValue.equals(custom_lock_screen)) {
@@ -95,6 +96,14 @@ public class PrefsFragment extends PreferenceFragment implements
         }
 
         return true;
+    }
+
+    @SuppressWarnings("deprecation")
+    private void clearLockScreenText(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Settings.System.putString(context.getContentResolver(),
+                    Settings.System.NEXT_ALARM_FORMATTED, "");
+        }
     }
 
     public static class ActivityDialogFragment extends DialogFragment {

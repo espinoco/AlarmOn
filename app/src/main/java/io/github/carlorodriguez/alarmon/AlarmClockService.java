@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -173,12 +174,22 @@ public final class AlarmClockService extends Service {
       manager.cancel(NOTIFICATION_BAR_ID);
     }
 
-    // Set the system alarm string for display on the lock screen.
-    String lockScreenText = AppSettings.lockScreenString(getApplicationContext(), nextTime);
-    if (lockScreenText != null) {
-      Settings.System.putString(getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, lockScreenText);
-    }
+    setSystemAlarmStringOnLockScreen(getApplicationContext(), nextTime);
   }
+
+    @SuppressWarnings("deprecation")
+    public static void setSystemAlarmStringOnLockScreen(Context context,
+            AlarmTime alarmTime) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            String lockScreenText = AppSettings.lockScreenString(
+                    context, alarmTime);
+
+            if (lockScreenText != null) {
+                Settings.System.putString(context.getContentResolver(),
+                        Settings.System.NEXT_ALARM_FORMATTED, lockScreenText);
+            }
+        }
+    }
 
   // This hack is necessary b/c I released a version of the code with a bunch
   // of errors in the settings strings.  This should correct them.
@@ -221,11 +232,7 @@ public final class AlarmClockService extends Service {
       (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     manager.cancel(NOTIFICATION_BAR_ID);
 
-    String lockScreenText = AppSettings.lockScreenString(getApplicationContext(), null);
-    // Only clear the lock screen if the preference is set.
-    if (lockScreenText != null) {
-      Settings.System.putString(getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, lockScreenText);
-    }
+      setSystemAlarmStringOnLockScreen(getApplicationContext(), null);
   }
 
   @Override
