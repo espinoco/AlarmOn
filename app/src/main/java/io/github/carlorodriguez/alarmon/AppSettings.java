@@ -159,7 +159,7 @@ public final class AppSettings {
         SharedPreferences sharedPref = PreferenceManager.
                 getDefaultSharedPreferences(context);
 
-        final String defaultTemplate = "${c} >> ${t}";
+        final String defaultTemplate = "${c} | ${t}";
 
         final String template = sharedPref.getString(NOTIFICATION_TEXT, "2");
 
