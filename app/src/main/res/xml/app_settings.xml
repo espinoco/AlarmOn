@@ -7,6 +7,16 @@
     android:summaryOff="@string/notification_icon_off"
     android:defaultValue="true" />
 
+    <ListPreference
+        android:persistent="true"
+        android:key="NOTIFICATION_TEXT"
+        android:title="@string/notification_text_title"
+        android:dialogTitle="@string/notification_text_title"
+        android:summary="@string/notification_text_summary"
+        android:entries="@array/notification_text_types"
+        android:entryValues="@array/notification_text_values"
+        android:defaultValue="2" />
+
   <ListPreference android:persistent="true"
     android:key="LOCK_SCREEN"
     android:title="@string/lock_screen_title"

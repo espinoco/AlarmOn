@@ -99,4 +99,8 @@
   <string name="grant">Conceder</string>
   <string name="permission_not_granted">Lo sentimos, no podemos acceder a esta funcionalidad hasta que nos conceda su permiso.</string>
   <string name="permission_not_granted_title">Sin permiso</string>
+  <string name="notification_text_title">Texto en notificación</string>
+  <string name="notification_text_summary">Configure la información de la alarma que se muestra en la notificación.</string>
+  <string name="custom_notification_text">Texto en notificación personalizado</string>
+  <string name="custom_notification_text_description" formatted="false">Este es el texto que se mostrará en la notificación. En el texto, puede usar la cadena ${c} para mostrar la cuenta regresiva y/o la cadena ${t} para mostrar el tiempo de la alarma.\nEjemplo: Hola ${t}\nAparecerá como: Hola 8:00 AM</string>
 </resources>

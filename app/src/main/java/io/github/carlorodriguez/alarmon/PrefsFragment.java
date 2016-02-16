@@ -41,6 +41,7 @@ public class PrefsFragment extends PreferenceFragment implements
         Preference.OnPreferenceChangeListener {
 
     private static final int CUSTOM_LOCK_SCREEN = 0;
+    private static final int CUSTOM_NOTIFICATION_TEXT = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,16 +89,42 @@ public class PrefsFragment extends PreferenceFragment implements
             getPreferenceScreen().removePreference(
                     findPreference(AppSettings.DEBUG_MODE));
         }
+
+        findPreference(AppSettings.NOTIFICATION_TEXT).
+                setOnPreferenceChangeListener(this);
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (preference.getKey().equals(AppSettings.APP_THEME_KEY)) {
-            ActivityAlarmClock.activityAlarmClock.finish();
+        switch (preference.getKey()) {
+            case AppSettings.APP_THEME_KEY:
+                ActivityAlarmClock.activityAlarmClock.finish();
 
-            getActivity().finish();
+                getActivity().finish();
 
-            startActivity(new Intent(getActivity(), ActivityAlarmClock.class));
+                startActivity(new Intent(getActivity(), ActivityAlarmClock.class));
+                break;
+            case AppSettings.NOTIFICATION_TEXT:
+                final String customNotificationText = getResources().getStringArray(
+                        R.array.notification_text_values)[3];
+
+                if (newValue.equals(customNotificationText)) {
+                    DialogFragment dialog = new ActivityDialogFragment().newInstance(
+                            CUSTOM_NOTIFICATION_TEXT);
+
+                    dialog.show(getFragmentManager(), "ActivityDialogFragment");
+                } else {
+                    final Intent causeRefresh = new Intent(getActivity(),
+                            AlarmClockService.class);
+
+                    causeRefresh.putExtra(AlarmClockService.COMMAND_EXTRA,
+                            AlarmClockService.COMMAND_NOTIFICATION_REFRESH);
+
+                    getActivity().startService(causeRefresh);
+                }
+                break;
+            default:
+                break;
         }
 
         return true;
@@ -158,6 +185,62 @@ public class PrefsFragment extends PreferenceFragment implements
                         }
                     });
                     return lockTextBuilder.create();
+                case CUSTOM_NOTIFICATION_TEXT:
+                    final SharedPreferences notifyPrefs = PreferenceManager.
+                            getDefaultSharedPreferences(getActivity());
+
+                    final View notifyTextView = View.inflate(getActivity(),
+                            R.layout.custom_notification_text_dialog, null);
+
+                    final EditText notifyEditText = (EditText) notifyTextView.
+                            findViewById(R.id.custom_notification_text_et);
+
+                    notifyEditText.setText(notifyPrefs.getString(
+                                    AppSettings.CUSTOM_NOTIFICATION_TEXT, ""));
+
+                    final AlertDialog.Builder notifyBuilder = new
+                            AlertDialog.Builder(getActivity());
+
+                    notifyBuilder.setTitle(R.string.custom_notification_text);
+
+                    notifyBuilder.setView(notifyTextView);
+
+                    notifyBuilder.setPositiveButton(R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferences.Editor editor = notifyPrefs.edit();
+
+                            editor.putString(
+                                    AppSettings.CUSTOM_NOTIFICATION_TEXT,
+                                    notifyEditText.getText().toString().trim()
+                            );
+
+                            editor.apply();
+
+                            final Intent causeRefresh = new Intent(
+                                    getActivity(),
+                                    AlarmClockService.class
+                            );
+
+                            causeRefresh.putExtra(
+                                    AlarmClockService.COMMAND_EXTRA,
+                                    AlarmClockService.COMMAND_NOTIFICATION_REFRESH
+                            );
+
+                            getActivity().startService(causeRefresh);
+
+                            dismiss();
+                        }
+                    });
+                    notifyBuilder.setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dismiss();
+                        }
+                    });
+                    return notifyBuilder.create();
                 default:
                     return super.onCreateDialog(savedInstanceState);
             }

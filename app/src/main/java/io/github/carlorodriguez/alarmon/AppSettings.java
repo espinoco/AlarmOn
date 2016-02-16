@@ -34,6 +34,8 @@ public final class AppSettings {
   public static final String CUSTOM_LOCK_SCREEN_PERSISTENT = "CUSTOM_LOCK_PERSISTENT";
   public static final String ALARM_TIMEOUT = "ALARM_TIMEOUT";
     public static final String APP_THEME_KEY = "APP_THEME_KEY";
+    public static final String NOTIFICATION_TEXT = "NOTIFICATION_TEXT";
+    public static final String CUSTOM_NOTIFICATION_TEXT = "CUSTOM_NOTIFICATION_TEXT";
 
   public static boolean displayNotificationIcon(Context c) {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
@@ -150,6 +152,29 @@ public final class AppSettings {
             case "2":
                 activity.setTheme(R.style.AppThemeLightDarkActionBar);
                 break;
+        }
+    }
+
+    public static String getNotificationTemplate(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.
+                getDefaultSharedPreferences(context);
+
+        final String defaultTemplate = "${c} >> ${t}";
+
+        final String template = sharedPref.getString(NOTIFICATION_TEXT, "2");
+
+        switch (template) {
+            case "0":
+                return "${c}";
+            case "1":
+                return "${t}";
+            case "2":
+                return defaultTemplate;
+            case "3":
+                return sharedPref.getString(CUSTOM_NOTIFICATION_TEXT,
+                        defaultTemplate);
+            default:
+                return defaultTemplate;
         }
     }
 

@@ -15,6 +15,7 @@
 
 package io.github.carlorodriguez.alarmon;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Notification;
@@ -35,6 +36,8 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
+
+import org.apache.commons.lang3.text.StrSubstitutor;
 
 public final class AlarmClockService extends Service {
   public final static String COMMAND_EXTRA = "command";
@@ -138,15 +141,24 @@ public final class AlarmClockService extends Service {
   }
 
   private void refreshNotification() {
-    AlarmTime nextTime = pendingAlarms.nextAlarmTime();
-    String nextString;
-    if (nextTime != null) {
-      nextString = getString(R.string.next_alarm)
-        + " " + nextTime.localizedString(getApplicationContext())
-        + " (" + nextTime.timeUntilString(getApplicationContext()) + ")";
-    } else {
-      nextString = getString(R.string.no_pending_alarms);
-    }
+      String resolvedString = getString(R.string.no_pending_alarms);
+
+      AlarmTime nextTime = pendingAlarms.nextAlarmTime();
+
+      if (nextTime != null) {
+          Map<String, String> values = new HashMap<>();
+
+          values.put("t", nextTime.localizedString(getApplicationContext()));
+
+          values.put("c", nextTime.timeUntilString(getApplicationContext()));
+
+          String templateString = AppSettings.getNotificationTemplate(
+                  getApplicationContext());
+
+          StrSubstitutor sub = new StrSubstitutor(values);
+
+          resolvedString = sub.replace(templateString);
+      }
 
     // Make the notification launch the UI Activity when clicked.
     final Intent notificationIntent = new Intent(this, ActivityAlarmClock.class);
@@ -162,7 +174,7 @@ public final class AlarmClockService extends Service {
               .setContentIntent(launch)
               .setSmallIcon(R.drawable.ic_stat_notify_alarm)
               .setContentTitle(getString(R.string.app_name))
-              .setContentText(nextString)
+              .setContentText(resolvedString)
               .build();
       notification.flags |= Notification.FLAG_ONGOING_EVENT;
 

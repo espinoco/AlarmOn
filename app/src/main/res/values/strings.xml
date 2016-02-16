@@ -100,4 +100,8 @@
   <string name="grant">Grant</string>
   <string name="permission_not_granted">We are sorry, we cannot access this feature until you grant us permission.</string>
   <string name="permission_not_granted_title">Permission not granted</string>
+  <string name="notification_text_title">Notification text</string>
+  <string name="notification_text_summary">Configure alarm information displayed on the notification</string>
+  <string name="custom_notification_text">Custom notification text</string>
+  <string name="custom_notification_text_description" formatted="false">This is the text that will display on the notification. In your text, you may use the string ${c} to display the count down time and/or the string ${t} to display the alarm time.\nExample: Hello ${t}\nWould appear as: Hello 8:00 AM</string>
 </resources>
