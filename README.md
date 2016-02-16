@@ -15,6 +15,12 @@ AlarmOn is a fork of
 
 * Keep alive and actualized this awesome app.
 
+### TODO
+
+* Comments as javadocs documentation and remove trivial comments.
+
+* Complete xml translations.
+
 # Debug mode
 
 There is a debug mode for the debug build type on application settings.
@@ -35,7 +41,7 @@ help you to achieve this goal in a powerful, fast and healthy way.
 
 # Contribute
 
-Feel free to contribute, trying to achieve above objectives.
+Feel free to contribute, trying to achieve above objectives or TODOS.
 
 # License
 
