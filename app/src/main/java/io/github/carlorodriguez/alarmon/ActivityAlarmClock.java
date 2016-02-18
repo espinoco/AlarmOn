@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,9 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+
+import com.wdullaer.materialdatetimepicker.time.*;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
@@ -43,15 +47,17 @@ import java.util.Calendar;
  * clicking on the clock will trigger a dialog for enabling/disabling 'debug
  * mode.'
  */
-public final class ActivityAlarmClock extends AppCompatActivity {
+public final class ActivityAlarmClock extends AppCompatActivity implements
+        TimePickerDialog.OnTimeSetListener,
+        TimePickerDialog.OnTimeChangedListener {
 
-    public static final int TIME_PICKER = 0;
     public static final int DELETE_CONFIRM = 1;
     public static final int DELETE_ALARM_CONFIRM = 2;
 
     public static final int ACTION_TEST_ALARM = 0;
     public static final int ACTION_PENDING_ALARMS = 1;
 
+    private TimePickerDialog picker;
     public static ActivityAlarmClock activityAlarmClock;
 
     private static AlarmClockServiceBinder service;
@@ -123,7 +129,37 @@ public final class ActivityAlarmClock extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialogFragment(TIME_PICKER);
+                Calendar now = Calendar.getInstance();
+
+                picker = TimePickerDialog.newInstance(
+                        ActivityAlarmClock.this,
+                        ActivityAlarmClock.this,
+                        now.get(Calendar.HOUR_OF_DAY),
+                        now.get(Calendar.MINUTE),
+                        DateFormat.is24HourFormat(ActivityAlarmClock.this)
+                );
+
+                if (AppSettings.isThemeDark(ActivityAlarmClock.this)) {
+                    picker.setThemeDark(true);
+                }
+
+                picker.setAccentColor(AppSettings.getTimePickerColor(
+                        ActivityAlarmClock.this));
+
+                picker.vibrate(true);
+
+                if (AppSettings.isDebugMode(ActivityAlarmClock.this)) {
+                    picker.enableSeconds(true);
+                } else {
+                    picker.enableSeconds(false);
+                }
+
+                AlarmTime time = new AlarmTime(now.get(Calendar.HOUR_OF_DAY),
+                        now.get(Calendar.MINUTE), 0);
+
+                picker.setTitle(time.timeUntilString(ActivityAlarmClock.this));
+
+                picker.show(getFragmentManager(), "TimePickerDialog");
             }
         });
 
@@ -207,6 +243,17 @@ public final class ActivityAlarmClock extends AppCompatActivity {
                 }
             }
         });
+
+        TimePickerDialog tpd = (TimePickerDialog) getFragmentManager().
+                findFragmentByTag("TimePickerDialog");
+
+        if (tpd != null) {
+            picker = tpd;
+
+            tpd.setOnTimeSetListener(this);
+
+            tpd.setOnTimeChangedListener(this);
+        }
     }
 
     @Override
@@ -238,6 +285,21 @@ public final class ActivityAlarmClock extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         return true;
+    }
+
+    @Override
+    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
+        service.createAlarm(new AlarmTime(hourOfDay,
+                minute, second));
+
+        adapter.requery();
+    }
+
+    @Override
+    public void onTimeChanged(RadialPickerLayout view, int hourOfDay, int minute, int second) {
+        AlarmTime time = new AlarmTime(hourOfDay, minute, second);
+
+        picker.setTitle(time.timeUntilString(this));
     }
 
     @Override
@@ -336,25 +398,6 @@ public final class ActivityAlarmClock extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             switch (getArguments().getInt("id")) {
-                case ActivityAlarmClock.TIME_PICKER:
-                    return  new TimePickerDialog(getActivity(),
-                            getString(R.string.add_alarm),
-                            AppSettings.isDebugMode(getActivity()),
-                            new TimePickerDialog.OnTimeSetListener() {
-                                @Override
-                                public void onTimeSet(int hourOfDay, int minute,
-                                        int second) {
-                                    // When a time is selected, create it via the service and
-                                    // force the list view to re-query the alarm list.
-                                    service.createAlarm(new AlarmTime(hourOfDay,
-                                                    minute, second));
-
-                                    adapter.requery();
-
-                                    // Destroy this dialog so that it does not save its state.
-                                    dismiss();
-                                }
-                            });
                 case ActivityAlarmClock.DELETE_CONFIRM:
                     final AlertDialog.Builder deleteConfirmBuilder =
                             new AlertDialog.Builder(getActivity());

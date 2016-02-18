@@ -33,6 +33,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,6 +49,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
 /**
  * This activity is used for editing alarm settings.  Settings are broken
  * into two pieces: alarm information and actual settings.  Every alarm will
@@ -62,7 +66,10 @@ import android.widget.AdapterView.OnItemClickListener;
  * being edited.  AlarmSettings.DEFAULT_SETTINGS_ID can be used to edit the
  * default settings.
  */
-public final class ActivityAlarmSettings extends AppCompatActivity {
+public final class ActivityAlarmSettings extends AppCompatActivity implements
+        TimePickerDialog.OnTimeChangedListener,
+        TimePickerDialog.OnTimeSetListener {
+
   public static final String EXTRAS_ALARM_ID = "alarm_id";
   private static final int MISSING_EXTRAS = -69;
     private static final int READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 0;
@@ -76,7 +83,6 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
     VOLUME_FADE
   }
 
-    public static final int TIME_PICKER = 0;
     public static final int NAME_PICKER = 1;
     public static final int DOW_PICKER = 2;
     public static final int TONE_PICKER = 3;
@@ -85,6 +91,8 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
     public static final int DELETE_CONFIRM = 6;
     public static final int EXPLAIN_READ_EXTERNAL_STORAGE = 7;
     public static final int PERMISSION_NOT_GRANTED = 8;
+
+    private TimePickerDialog picker;
 
   private static long alarmId;
   private static AlarmClockServiceBinder service;
@@ -281,6 +289,17 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
   protected void onResume() {
     super.onResume();
     service.bind();
+
+      TimePickerDialog tpd = (TimePickerDialog) getFragmentManager().
+              findFragmentByTag("TimePickerDialog");
+
+      if (tpd != null) {
+          picker = tpd;
+
+          tpd.setOnTimeSetListener(this);
+
+          tpd.setOnTimeChangedListener(this);
+      }
   }
 
   @Override
@@ -310,6 +329,25 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
+        final AlarmTime time = info.getTime();
+
+        info.setTime(new AlarmTime(hourOfDay, minute, second, time.getDaysOfWeek()));
+
+        settingsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onTimeChanged(RadialPickerLayout view, int hourOfDay, int minute, int second) {
+        final AlarmTime infoTime = info.getTime();
+
+        final AlarmTime time = new AlarmTime(hourOfDay, minute, second,
+                infoTime.getDaysOfWeek());
+
+        picker.setTitle(time.timeUntilString(this));
+    }
+
     public void requestReadExternalStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -334,9 +372,37 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
       SettingType type = adapter.getItem(position).type();
       switch (type) {
         case TIME:
-          showDialogFragment(TIME_PICKER);
-          break;
+            final AlarmTime time = info.getTime();
 
+            Calendar c = time.calendar();
+
+            picker = TimePickerDialog.newInstance(
+                    ActivityAlarmSettings.this,
+                    ActivityAlarmSettings.this,
+                    c.get(Calendar.HOUR_OF_DAY),
+                    c.get(Calendar.MINUTE),
+                    DateFormat.is24HourFormat(ActivityAlarmSettings.this)
+            );
+
+            if (AppSettings.isThemeDark(ActivityAlarmSettings.this)) {
+                picker.setThemeDark(true);
+            }
+
+            picker.setAccentColor(AppSettings.getTimePickerColor(
+                    ActivityAlarmSettings.this));
+
+            picker.vibrate(true);
+
+            if (AppSettings.isDebugMode(ActivityAlarmSettings.this)) {
+                picker.enableSeconds(true);
+            } else {
+                picker.enableSeconds(false);
+            }
+
+            picker.setTitle(time.timeUntilString(ActivityAlarmSettings.this));
+
+            picker.show(getFragmentManager(), "TimePickerDialog");
+          break;
         case NAME:
           showDialogFragment(NAME_PICKER);
           break;
@@ -433,23 +499,6 @@ public final class ActivityAlarmSettings extends AppCompatActivity {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
       switch (getArguments().getInt("id")) {
-          case TIME_PICKER:
-              final AlarmTime time = info.getTime();
-              int hour = time.calendar().get(Calendar.HOUR_OF_DAY);
-              int minute = time.calendar().get(Calendar.MINUTE);
-              int second = time.calendar().get(Calendar.SECOND);
-              return new TimePickerDialog(getActivity(), getString(R.string.time),
-                      hour, minute, second, AppSettings.isDebugMode(getActivity()),
-                      new TimePickerDialog.OnTimeSetListener() {
-                          @Override
-                          public void onTimeSet(int hourOfDay, int minute, int second) {
-                              info.setTime(new AlarmTime(hourOfDay, minute, second, time.getDaysOfWeek()));
-                              settingsAdapter.notifyDataSetChanged();
-                              // Destroy this dialog so that it does not save its state.
-                              dismiss();
-                          }
-                      });
-
           case NAME_PICKER:
               final View nameView = View.inflate(getActivity(),
                       R.layout.name_settings_dialog, null);

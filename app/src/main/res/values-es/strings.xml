@@ -103,4 +103,22 @@
   <string name="notification_text_summary">Configure la información de la alarma que se muestra en la notificación.</string>
   <string name="custom_notification_text">Texto en notificación personalizado</string>
   <string name="custom_notification_text_description" formatted="false">Este es el texto que se mostrará en la notificación. En el texto, puede usar la cadena ${c} para mostrar la cuenta regresiva y/o la cadena ${t} para mostrar el tiempo de la alarma.\nEjemplo: Hola ${t}\nAparecerá como: Hola 8:00 AM</string>
+  <string name="time_picker_color_title">Color del selector de tiempo</string>
+  <string name="time_picker_color_summary">Selecciona el color del selector de tiempo.</string>
+  <string name="red">Rojo</string>
+  <string name="pink">Rosa</string>
+  <string name="purple">Morado</string>
+  <string name="deep_purple">Morado Oscuro</string>
+  <string name="indigo">Índigo</string>
+  <string name="blue">Azul</string>
+  <string name="light_blue">Azul Claro</string>
+  <string name="cyan">Cian</string>
+  <string name="teal">Verde Azulado</string>
+  <string name="green">Verde</string>
+  <string name="light_green">Verde Claro</string>
+  <string name="orange">Naranja</string>
+  <string name="deep_orange">Naranja Oscuro</string>
+  <string name="brown">Marrón</string>
+  <string name="grey">Gris</string>
+  <string name="blue_grey">Gris Azulado</string>
 </resources>
