@@ -457,27 +457,61 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     public abstract SettingType type();
   }
 
-  /**
-   * This adapter populates the settings_items view with the data encapsulated
-   * in the individual Setting objects.
-   */
-  private final class SettingsAdapter extends ArrayAdapter<Setting> {
-    public SettingsAdapter(Context context, List<Setting> settingsObjects) {
-      super(context, 0, settingsObjects);
+    /**
+     * This adapter populates the settings_items view with the data encapsulated
+     * in the individual Setting objects.
+     */
+    private final class SettingsAdapter extends ArrayAdapter<Setting> {
+
+        List<Setting> settingsObjects;
+
+        public SettingsAdapter(Context context, List<Setting> settingsObjects) {
+            super(context, 0, settingsObjects);
+
+            this.settingsObjects = settingsObjects;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder;
+
+			if (convertView == null) {
+				LayoutInflater inflater = getLayoutInflater();
+
+				convertView = inflater.inflate(R.layout.settings_item, parent,
+                        false);
+
+				holder = new ViewHolder(convertView);
+
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			holder.populateFrom(settingsObjects.get(position));
+
+			return(convertView);
+        }
+
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-      LayoutInflater inflater = getLayoutInflater();
-      View row = inflater.inflate(R.layout.settings_item, null);
-      TextView name = (TextView) row.findViewById(R.id.setting_name);
-      TextView value = (TextView) row.findViewById(R.id.setting_value);
-      Setting setting = getItem(position);
-      name.setText(setting.name());
-      value.setText(setting.value());
-      return row;
-    }
-  }
+	private class ViewHolder {
+
+        private View row;
+
+		ViewHolder(View row) {
+            this.row = row;
+		}
+
+		void populateFrom(Setting setting) {
+            ((TextView) row.findViewById(R.id.setting_name)).
+                    setText(setting.name());
+
+            ((TextView) row.findViewById(R.id.setting_value)).
+                    setText(setting.value());
+		}
+
+	}
 
     private void showDialogFragment(int id) {
         DialogFragment dialog = new ActivityDialogFragment().newInstance(
