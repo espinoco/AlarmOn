@@ -6,7 +6,7 @@
 
   </style>
     <style name="AppThemeDark" parent="Theme.AppCompat">
-      <item name="customAddIcon">@drawable/ic_menu_add</item>
+      <item name="customAddIcon">@drawable/ic_menu_add_light</item>
       <item name="customDeleteIcon">@drawable/ic_menu_delete</item>
       <item name="customSettingsItemTitle">@color/white</item>
       <item name="customTimeIcon">@drawable/ic_dialog_time</item>
@@ -14,7 +14,7 @@
     </style>
 
   <style name="AppThemeLight" parent="Theme.AppCompat.Light">
-    <item name="customAddIcon">@drawable/ic_menu_add_light</item>
+    <item name="customAddIcon">@drawable/ic_menu_add</item>
     <item name="customDeleteIcon">@drawable/ic_menu_delete_light</item>
     <item name="customSettingsItemTitle">@android:color/black</item>
     <item name="customTimeIcon">@drawable/ic_dialog_time_light</item>

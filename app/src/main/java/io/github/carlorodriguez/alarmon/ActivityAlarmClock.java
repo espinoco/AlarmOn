@@ -23,11 +23,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -113,6 +115,31 @@ public final class ActivityAlarmClock extends AppCompatActivity {
                         (AlarmInfo) parent.getItemAtPosition(position));
 
                 return true;
+            }
+        });
+
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogFragment(TIME_PICKER);
+            }
+        });
+
+        alarmList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem > 0) {
+                    fab.hide();
+                } else {
+                    fab.show();
+                }
             }
         });
 
@@ -216,9 +243,6 @@ public final class ActivityAlarmClock extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_add_alarm:
-                showDialogFragment(TIME_PICKER);
-                break;
             case R.id.action_delete_all:
                 showDialogFragment(DELETE_CONFIRM);
                 break;
