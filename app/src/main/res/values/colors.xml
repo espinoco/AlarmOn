@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <item name="white" type="color">#ffffff</item>
+  <item name="teal" type="color">#26a69a</item>
+  <item name="red" type="color">#ef5350</item>
+  <item name="pink" type="color">#f06292</item>
+  <item name="purple" type="color">#ba68c8</item>
+  <item name="deep_purple" type="color">#9575cd</item>
+  <item name="indigo" type="color">#7986cb</item>
+  <item name="blue" type="color">#1e88e5</item>
+  <item name="light_blue" type="color">#039be5</item>
+  <item name="cyan" type="color">#00acc1</item>
+  <item name="green" type="color">#43a047</item>
+  <item name="light_green" type="color">#689f38</item>
+  <item name="orange" type="color">#f57c00</item>
+  <item name="deep_orange" type="color">#ff5722</item>
+  <item name="brown" type="color">#a1887f</item>
+  <item name="grey" type="color">#757575</item>
+  <item name="blue_grey" type="color">#78909c</item>
 </resources>

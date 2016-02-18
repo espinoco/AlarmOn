@@ -48,6 +48,16 @@
 
   </ListPreference>
 
+  <ListPreference
+      android:persistent="true"
+      android:key="TIME_PICKER_COLOR"
+      android:title="@string/time_picker_color_title"
+      android:dialogTitle="@string/time_picker_color_title"
+      android:summary="@string/time_picker_color_summary"
+      android:entries="@array/time_picker_color_types"
+      android:entryValues="@array/time_picker_color_values"
+      android:defaultValue="teal" />
+
   <ListPreference android:persistent="true"
     android:key="DEBUG_MODE"
     android:title="@string/debug_mode_title"

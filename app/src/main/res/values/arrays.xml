@@ -64,4 +64,41 @@
     <item>1</item>
     <item>2</item>
   </string-array>
+
+  <string-array name="time_picker_color_types">
+    <item>@string/red</item>
+    <item>@string/pink</item>
+    <item>@string/purple</item>
+    <item>@string/deep_purple</item>
+    <item>@string/indigo</item>
+    <item>@string/blue</item>
+    <item>@string/light_blue</item>
+    <item>@string/cyan</item>
+    <item>@string/teal</item>
+    <item>@string/green</item>
+    <item>@string/light_green</item>
+    <item>@string/orange</item>
+    <item>@string/deep_orange</item>
+    <item>@string/brown</item>
+    <item>@string/grey</item>
+    <item>@string/blue_grey</item>
+  </string-array>
+  <string-array name="time_picker_color_values">
+    <item>red</item>
+    <item>pink</item>
+    <item>purple</item>
+    <item>deep_purple</item>
+    <item>indigo</item>
+    <item>blue</item>
+    <item>light_blue</item>
+    <item>cyan</item>
+    <item>teal</item>
+    <item>green</item>
+    <item>light_green</item>
+    <item>orange</item>
+    <item>deep_orange</item>
+    <item>brown</item>
+    <item>grey</item>
+    <item>blue-grey</item>
+  </string-array>
 </resources>

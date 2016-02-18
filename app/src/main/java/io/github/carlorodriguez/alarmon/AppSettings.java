@@ -19,7 +19,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 
 /**
  * Utility class for accessing each of the global application settings.
@@ -34,6 +36,7 @@ public final class AppSettings {
   public static final String CUSTOM_LOCK_SCREEN_PERSISTENT = "CUSTOM_LOCK_PERSISTENT";
   public static final String ALARM_TIMEOUT = "ALARM_TIMEOUT";
     public static final String APP_THEME_KEY = "APP_THEME_KEY";
+    public static final String TIME_PICKER_COLOR = "TIME_PICKER_COLOR";
     public static final String NOTIFICATION_TEXT = "NOTIFICATION_TEXT";
     public static final String CUSTOM_NOTIFICATION_TEXT = "CUSTOM_NOTIFICATION_TEXT";
 
@@ -153,6 +156,98 @@ public final class AppSettings {
                 activity.setTheme(R.style.AppThemeLightDarkActionBar);
                 break;
         }
+    }
+
+    public static boolean isThemeDark(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.
+                getDefaultSharedPreferences(context);
+
+        String theme = sharedPref.getString(APP_THEME_KEY, "0");
+
+        switch (theme) {
+            case "0":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static int getTimePickerColor(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.
+                getDefaultSharedPreferences(context);
+
+        String color = sharedPref.getString(TIME_PICKER_COLOR, "teal");
+
+        String pickerColor;
+
+        switch (color) {
+            case "red":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.red));
+                break;
+            case "pink":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.pink));
+                break;
+            case "purple":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.purple));
+                break;
+            case "deep_purple":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.deep_purple));
+                break;
+            case "indigo":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.indigo));
+                break;
+            case "blue":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.blue));
+                break;
+            case "light_blue":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.light_blue));
+                break;
+            case "cyan":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.cyan));
+                break;
+            case "green":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.green));
+                break;
+            case "light_green":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.light_green));
+                break;
+            case "orange":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.orange));
+                break;
+            case "deep_orange":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.deep_orange));
+                break;
+            case "brown":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.brown));
+                break;
+            case "grey":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.grey));
+                break;
+            case "blue-grey":
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.blue_grey));
+                break;
+            default:
+                pickerColor = Integer.toHexString(ContextCompat.getColor(context,
+                                R.color.teal));
+                break;
+        }
+
+        return Color.parseColor("#" + pickerColor);
     }
 
     public static String getNotificationTemplate(Context context) {

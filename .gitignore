@@ -9,6 +9,7 @@
 Thumbs.db
 *~
 key.p12
+/library/build/
 
 # gnu global
 /GPATH
