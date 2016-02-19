@@ -17,4 +17,5 @@
   <item name="brown" type="color">#a1887f</item>
   <item name="grey" type="color">#757575</item>
   <item name="blue_grey" type="color">#78909c</item>
+  <item name="notification_color" type="color">#1e88e5</item>
 </resources>

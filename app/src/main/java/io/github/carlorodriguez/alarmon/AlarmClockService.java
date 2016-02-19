@@ -35,6 +35,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -175,6 +176,8 @@ public final class AlarmClockService extends Service {
               .setSmallIcon(R.drawable.ic_stat_notify_alarm)
               .setContentTitle(getString(R.string.app_name))
               .setContentText(resolvedString)
+              .setColor(ContextCompat.getColor(getApplicationContext(),
+                      R.color.notification_color))
               .build();
       notification.flags |= Notification.FLAG_ONGOING_EVENT;
 

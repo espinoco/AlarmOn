@@ -34,6 +34,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 
 /**
  * This service is responsible for notifying the user when an alarm is
@@ -222,6 +223,8 @@ public class NotificationService extends Service {
                   .setSmallIcon(R.drawable.ic_stat_notify_alarm)
                   .setContentTitle(notifyText)
                   .setContentText("")
+                  .setColor(ContextCompat.getColor(getApplicationContext(),
+                          R.color.notification_color))
                   .build();
           notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
