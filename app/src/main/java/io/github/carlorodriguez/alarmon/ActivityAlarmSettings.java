@@ -33,6 +33,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +45,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -73,6 +75,7 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
   public static final String EXTRAS_ALARM_ID = "alarm_id";
   private static final int MISSING_EXTRAS = -69;
     private static final int READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 0;
+    private static final String SETTINGS_VIBRATE_KEY = "SETTINGS_VIBRATE_KEY";
 
   private enum SettingType {
     TIME,
@@ -93,6 +96,8 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     public static final int PERMISSION_NOT_GRANTED = 8;
 
     private TimePickerDialog picker;
+
+    private SwitchCompat mVibrateSwitch;
 
   private static long alarmId;
   private static AlarmClockServiceBinder service;
@@ -251,7 +256,8 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     });
 
     final ListView settingsList = (ListView) findViewById(R.id.settings_list);
-    settingsAdapter = new SettingsAdapter(getApplicationContext(), settingsObjects);
+    settingsAdapter = new SettingsAdapter(getApplicationContext(),
+            settingsObjects, savedInstanceState);
     settingsList.setAdapter(settingsAdapter);
     settingsList.setOnItemClickListener(new SettingsListClickListener());
   }
@@ -327,6 +333,13 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
                 showDialogFragment(PERMISSION_NOT_GRANTED);
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(SETTINGS_VIBRATE_KEY, mVibrateSwitch.isChecked());
     }
 
     @Override
@@ -425,11 +438,6 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
           showDialogFragment(SNOOZE_PICKER);
           break;
 
-        case VIBRATE:
-          settings.setVibrate(!settings.getVibrate());
-          settingsAdapter.notifyDataSetChanged();
-          break;
-
         case VOLUME_FADE:
           showDialogFragment(VOLUME_FADE_PICKER);
           break;
@@ -464,31 +472,37 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     private final class SettingsAdapter extends ArrayAdapter<Setting> {
 
         List<Setting> settingsObjects;
+        private Bundle savedInstanceState;
 
-        public SettingsAdapter(Context context, List<Setting> settingsObjects) {
+        public SettingsAdapter(Context context, List<Setting> settingsObjects,
+               Bundle savedInstanceState) {
             super(context, 0, settingsObjects);
 
             this.settingsObjects = settingsObjects;
+            this.savedInstanceState = savedInstanceState;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
 
-			if (convertView == null) {
-				LayoutInflater inflater = getLayoutInflater();
+            LayoutInflater inflater = getLayoutInflater();
 
-				convertView = inflater.inflate(R.layout.settings_item, parent,
+            if (settingsObjects.get(position).name().
+                    equalsIgnoreCase(getString(R.string.vibrate))) {
+                convertView = inflater.inflate(R.layout.vibrate_settings_item, parent,
                         false);
+            } else {
+                convertView = inflater.inflate(R.layout.settings_item, parent,
+                        false);
+            }
 
-				holder = new ViewHolder(convertView);
+            holder = new ViewHolder(convertView);
 
-				convertView.setTag(holder);
-			} else {
-				holder = (ViewHolder) convertView.getTag();
-			}
+            convertView.setTag(holder);
 
-			holder.populateFrom(settingsObjects.get(position));
+			holder.populateFrom(settingsObjects.get(position),
+                    savedInstanceState);
 
 			return(convertView);
         }
@@ -503,12 +517,45 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
             this.row = row;
 		}
 
-		void populateFrom(Setting setting) {
+		void populateFrom(Setting setting, Bundle savedInstanceState) {
             ((TextView) row.findViewById(R.id.setting_name)).
                     setText(setting.name());
 
-            ((TextView) row.findViewById(R.id.setting_value)).
-                    setText(setting.value());
+            if (setting.name().equalsIgnoreCase(getString(R.string.vibrate))) {
+                mVibrateSwitch = (SwitchCompat) row.findViewById(
+                        R.id.setting_vibrate_sc);
+
+                if (savedInstanceState != null) {
+                    if (savedInstanceState.containsKey(SETTINGS_VIBRATE_KEY)) {
+                        mVibrateSwitch.setChecked(savedInstanceState.getBoolean(
+                                SETTINGS_VIBRATE_KEY));
+
+                        settings.setVibrate(savedInstanceState.getBoolean(
+                                SETTINGS_VIBRATE_KEY));
+                    }
+                } else {
+                    if (settings.getVibrate()) {
+                        mVibrateSwitch.setChecked(true);
+                    } else {
+                        mVibrateSwitch.setChecked(false);
+                    }
+                }
+
+                mVibrateSwitch.setOnCheckedChangeListener(
+                        new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            settings.setVibrate(true);
+                        } else {
+                            settings.setVibrate(false);
+                        }
+                    }
+                });
+            } else {
+                ((TextView) row.findViewById(R.id.setting_value)).
+                        setText(setting.value());
+            }
 		}
 
 	}
