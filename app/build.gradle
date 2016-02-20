@@ -42,8 +42,7 @@ dependencies {
 }
 
 play {
-    serviceAccountEmail = System.getenv("ALARM_SERVICE_EMAIL")
-    pk12File = file('key.p12')
+    jsonFile = file('keys.json')
     track = 'production'
     uploadImages = true
 }
