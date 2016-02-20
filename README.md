@@ -1,13 +1,22 @@
 # AlarmOn
 
-AlarmOn is a fork of
-[Alarm Klock](https://code.google.com/p/kraigsandroid/) by [kraigsandroid](https://github.com/kraigs-android).
+AlarmOn is an alarm clock for Android. forked from
+[Alarm Klock](https://code.google.com/p/kraigsandroid/) by
+[kraigsandroid](https://github.com/kraigs-android).
 
-# Objectives
+# Contribute
+
+We'd love to have your help in making AlarmOn better. The main purpose
+of this repository is to continue the development of AlarmOn, making
+it great. If you're not interested in helping right now that's ok
+too. :) Any feedback you have about using AlarmOn would be greatly
+appreciated.
+
+### Objectives
 
 * Use Android API level 14+.
 
-* Use support libraries.
+* Use Android support libraries.
 
 * Fix bugs for existing features.
 
@@ -17,13 +26,14 @@ AlarmOn is a fork of
 
 ### TODO
 
-* Comments as javadocs documentation and remove trivial comments.
-
 * Complete xml translations.
 
-# Debug mode
+* Comments as javadocs documentation and remove trivial comments.
 
-There is a debug mode for the debug build type on application settings.
+### Debug mode
+
+There is a debug mode for the debug build type on application
+settings.
 
 # FAQ
 
@@ -33,20 +43,17 @@ In software engineering, a project fork happens when developers take a
 copy of source code from one software package and start independent
 development on it, creating a distinct and separate piece of software.
 
-### Why does not implement waking up features like solve math problems to discard the alarm?
+### Where are the waking up features like solve math problems, take pictures or anything like that to discard the alarm?
 
 I believe alarm clocks are just tools, the responsible for waking you
-up when you desire is yourself, PNL is a powerful medium that can
-help you to achieve this goal in a powerful, fast and healthy way.
-
-# Contribute
-
-Feel free to contribute, trying to achieve above objectives or TODOS.
+up when you desire is yourself, every person is different but I can
+suggest a way of dealing with this and it's called: personal
+development.
 
 # License
 
 ```
-Copyright 2010 kraigs.android@gmail.com
+Copyright 2010-2016 kraigs.android@gmail.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
