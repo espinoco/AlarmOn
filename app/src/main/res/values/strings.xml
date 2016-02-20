@@ -123,4 +123,5 @@
   <string name="grey">Grey</string>
   <string name="blue_grey">Blue Grey</string>
   <string name="about">About</string>
+  <string name="selected_media">&#160;%1$s</string>
 </resources>

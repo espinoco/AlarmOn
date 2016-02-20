@@ -77,7 +77,7 @@ public class MediaPickerDialog extends AlertDialog {
       public void onItemPick(Uri uri, String name) {
         selectedUri = uri;
         selectedName = name;
-        lastSelected.setText(name);
+        lastSelected.setText(context.getString(R.string.selected_media, name));
       }
     };
 
