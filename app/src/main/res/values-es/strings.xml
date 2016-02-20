@@ -122,4 +122,7 @@
   <string name="grey">Gris</string>
   <string name="blue_grey">Gris Azulado</string>
   <string name="about">Acerca de</string>
+  <string name="volume_start_label">Volumen inicial: %1$d%%</string>
+  <string name="volume_end_label">Volumen final: %1$d%%</string>
+  <string name="volume_duration_label">Duración: %1$d segundos</string>
 </resources>

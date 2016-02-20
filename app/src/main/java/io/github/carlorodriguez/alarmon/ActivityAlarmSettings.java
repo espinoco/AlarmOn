@@ -46,8 +46,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -445,14 +445,6 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     }
   }
 
-  private static int tryParseInt(String input, int fallback) {
-    try {
-      return Integer.parseInt(input);
-    } catch (Exception e) {
-      return fallback;
-    }
-  }
-
   /**
    * A helper interface to encapsulate the data displayed in the list view of
    * this activity.  Consists of a setting name, a setting value, and a type.
@@ -667,25 +659,110 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
 
           case VOLUME_FADE_PICKER:
               final View fadeView = View.inflate(getActivity(), R.layout.fade_settings_dialog, null);
-              final EditText volumeStart = (EditText) fadeView.findViewById(R.id.volume_start);
-              String volumeStartText = "" + settings.getVolumeStartPercent();
-              volumeStart.setText(volumeStartText );
-              final EditText volumeEnd = (EditText) fadeView.findViewById(R.id.volume_end);
-              String volumeEndText = "" + settings.getVolumeEndPercent();
-              volumeEnd.setText(volumeEndText );
-              final EditText volumeDuration = (EditText) fadeView.findViewById(R.id.volume_duration);
-              String volumeDurationText = "" + settings.getVolumeChangeTimeSec();
-              volumeDuration.setText(volumeDurationText );
+
+              final SeekBar seekBar = (SeekBar) fadeView.findViewById(R.id.volume_start_sb);
+
+              seekBar.setMax(100);
+
+              seekBar.setProgress(settings.getVolumeStartPercent());
+
+              final TextView textView = (TextView) fadeView.findViewById(
+                      R.id.volume_start_tv);
+
+              textView.setText(getString(R.string.volume_start_label,
+                      settings.getVolumeStartPercent()));
+
+              seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                  @Override
+                  public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                      textView.setText(getString(R.string.volume_start_label,
+                              progress));
+                  }
+
+                  @Override
+                  public void onStartTrackingTouch(SeekBar seekBar) {
+
+                  }
+
+                  @Override
+                  public void onStopTrackingTouch(SeekBar seekBar) {
+
+                  }
+              });
+
+              final SeekBar endSeekBar = (SeekBar) fadeView.findViewById(R.id.volume_end_sb);
+
+              endSeekBar.setMax(100);
+
+              endSeekBar.setProgress(settings.getVolumeEndPercent());
+
+              final TextView endTextView = (TextView) fadeView.findViewById(
+                      R.id.volume_end_tv);
+
+              endTextView.setText(getString(R.string.volume_end_label,
+                      settings.getVolumeEndPercent()));
+
+              endSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                  @Override
+                  public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                      endTextView.setText(getString(R.string.volume_end_label,
+                              progress));
+                  }
+
+                  @Override
+                  public void onStartTrackingTouch(SeekBar seekBar) {
+
+                  }
+
+                  @Override
+                  public void onStopTrackingTouch(SeekBar seekBar) {
+
+                  }
+              });
+
+              final SeekBar durationSeekBar = (SeekBar) fadeView.findViewById(
+                      R.id.volume_duration_sb);
+
+              durationSeekBar.setMax(300);
+
+              durationSeekBar.setProgress(settings.getVolumeChangeTimeSec());
+
+              final TextView durationTextView = (TextView) fadeView.findViewById(
+                      R.id.volume_duration_tv);
+
+              durationTextView.setText(getString(R.string.volume_duration_label,
+                              settings.getVolumeChangeTimeSec()));
+
+              durationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                  @Override
+                  public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                      durationTextView.setText(getString(R.string.volume_duration_label,
+                                      progress));
+                  }
+
+                  @Override
+                  public void onStartTrackingTouch(SeekBar seekBar) {
+
+                  }
+
+                  @Override
+                  public void onStopTrackingTouch(SeekBar seekBar) {
+
+                  }
+              });
+
               final AlertDialog.Builder fadeBuilder = new AlertDialog.Builder(getActivity());
               fadeBuilder.setTitle(R.string.alarm_fade);
               fadeBuilder.setView(fadeView);
               fadeBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
-                      settings.setVolumeStartPercent(tryParseInt(volumeStart.getText().toString(), 0));
-                      settings.setVolumeEndPercent(tryParseInt(volumeEnd.getText().toString(), 100));
-                      settings.setVolumeChangeTimeSec(tryParseInt(volumeDuration.getText().toString(), 20));
+                      settings.setVolumeStartPercent(seekBar.getProgress());
+                      settings.setVolumeEndPercent(endSeekBar.getProgress());
+                      settings.setVolumeChangeTimeSec(durationSeekBar.getProgress());
+
                       settingsAdapter.notifyDataSetChanged();
+
                       dismiss();
                   }
               });

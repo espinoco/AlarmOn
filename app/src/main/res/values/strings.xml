@@ -124,4 +124,7 @@
   <string name="blue_grey">Blue Grey</string>
   <string name="about">About</string>
   <string name="selected_media">&#160;%1$s</string>
+  <string name="volume_start_label">Start volume: %1$d%%</string>
+  <string name="volume_end_label">End volume: %1$d%%</string>
+  <string name="volume_duration_label">Duration: %1$d seconds</string>
 </resources>
