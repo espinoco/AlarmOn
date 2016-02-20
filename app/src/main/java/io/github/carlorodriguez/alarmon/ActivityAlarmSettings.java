@@ -339,7 +339,9 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putBoolean(SETTINGS_VIBRATE_KEY, mVibrateSwitch.isChecked());
+        if (mVibrateSwitch != null) {
+            outState.putBoolean(SETTINGS_VIBRATE_KEY, mVibrateSwitch.isChecked());
+        }
     }
 
     @Override
