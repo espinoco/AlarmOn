@@ -15,14 +15,14 @@
 
 package io.github.carlorodriguez.alarmon;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 /**
  * Simple preferences activity to display/manage the shared preferences
  * that make up the global application settings.
  */
-public class ActivityAppSettings extends Activity {
+public class ActivityAppSettings extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +30,10 @@ public class ActivityAppSettings extends Activity {
 
         super.onCreate(savedInstanceState);
 
-        getFragmentManager().beginTransaction().replace(android.R.id.content,
-                new PrefsFragment()).commit();
+        PrefsFragment prefsFragment = new PrefsFragment();
+
+        getSupportFragmentManager().beginTransaction().replace(
+                android.R.id.content, prefsFragment).commit();
     }
 
 }

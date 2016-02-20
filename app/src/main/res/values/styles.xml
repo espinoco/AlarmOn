@@ -11,6 +11,7 @@
       <item name="customSettingsItemTitle">@color/white</item>
       <item name="customTimeIcon">@drawable/ic_dialog_time</item>
       <item name="customDivider">@android:drawable/divider_horizontal_dark</item>
+      <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
   <style name="AppThemeLight" parent="Theme.AppCompat.Light">
@@ -19,6 +20,7 @@
     <item name="customSettingsItemTitle">@android:color/black</item>
     <item name="customTimeIcon">@drawable/ic_dialog_time_light</item>
     <item name="customDivider">@android:drawable/divider_horizontal_bright</item>
+    <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
   </style>
 
   <style name="AppThemeLightDarkActionBar"
@@ -28,10 +30,12 @@
     <item name="customSettingsItemTitle">@android:color/black</item>
     <item name="customTimeIcon">@drawable/ic_dialog_time_light</item>
     <item name="customDivider">@android:drawable/divider_horizontal_bright</item>
+    <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
   </style>
 
   <style name="AppThemeLightNoActionBar"
          parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
   </style>
 
 </resources>

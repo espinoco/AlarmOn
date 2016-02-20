@@ -15,20 +15,20 @@
 
 package io.github.carlorodriguez.alarmon;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -37,16 +37,22 @@ import android.widget.EditText;
  * Simple preferences fragment to display/manage the shared preferences
  * that make up the global application settings.
  */
-public class PrefsFragment extends PreferenceFragment implements
+public class PrefsFragment extends PreferenceFragmentCompat implements
         Preference.OnPreferenceChangeListener {
 
     private static final int CUSTOM_LOCK_SCREEN = 0;
     private static final int CUSTOM_NOTIFICATION_TEXT = 1;
 
     @Override
+    public void onCreatePreferences(Bundle bundle, String s) {
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.app_settings);
+
+        getActivity().setTitle(R.string.app_settings);
 
         Preference.OnPreferenceChangeListener refreshListener = new Preference.OnPreferenceChangeListener() {
             @Override
@@ -100,9 +106,9 @@ public class PrefsFragment extends PreferenceFragment implements
             case AppSettings.APP_THEME_KEY:
                 ActivityAlarmClock.activityAlarmClock.finish();
 
-                getActivity().finish();
-
                 startActivity(new Intent(getActivity(), ActivityAlarmClock.class));
+
+                getActivity().finish();
                 break;
             case AppSettings.NOTIFICATION_TEXT:
                 final String customNotificationText = getResources().getStringArray(
