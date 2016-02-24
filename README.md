@@ -4,8 +4,7 @@ AlarmOn is an alarm clock for Android. forked from
 [Alarm Klock](https://code.google.com/p/kraigsandroid/) by
 [kraigsandroid](https://github.com/kraigs-android).
 
-Find it on Google Play:
-[link](https://play.google.com/store/apps/details?id=io.github.carlorodriguez.alarmon)
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png)](https://play.google.com/store/apps/details?id=io.github.carlorodriguez.alarmon)
 
 # Contribute
 
