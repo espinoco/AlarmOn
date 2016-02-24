@@ -61,7 +61,7 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
     public static ActivityAlarmClock activityAlarmClock;
 
     private static AlarmClockServiceBinder service;
-    private NotificationServiceBinder notifyService;
+    private static NotificationServiceBinder notifyService;
     private DbAccessor db;
     private static AlarmViewAdapter adapter;
     private Handler handler;
@@ -224,13 +224,6 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
                     count = service.firingAlarmCount();
                 } catch (RemoteException e) {
                     return;
-                } finally {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyService.unbind();
-                        }
-                    });
                 }
 
                 if (count > 0) {
@@ -263,6 +256,10 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
         handler.removeCallbacks(tickCallback);
 
         service.unbind();
+
+        if (notifyService != null) {
+            notifyService.unbind();
+        }
     }
 
     @Override
@@ -272,6 +269,8 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
         db.closeConnections();
 
         activityAlarmClock = null;
+
+        notifyService = null;
     }
 
     @Override
