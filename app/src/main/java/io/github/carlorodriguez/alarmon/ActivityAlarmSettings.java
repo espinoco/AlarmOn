@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -117,6 +118,12 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     setContentView(R.layout.settings);
 
       setTitle(getString(R.string.settings));
+
+      ActionBar actionBar = getSupportActionBar();
+
+      if (actionBar != null) {
+          actionBar.setDisplayHomeAsUpEnabled(true);
+      }
 
     // An alarm id is required in the extras bundle.
     alarmId = getIntent().getExtras().getLong(EXTRAS_ALARM_ID, MISSING_EXTRAS);
@@ -277,17 +284,15 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (alarmId == AlarmSettings.DEFAULT_SETTINGS_ID) {
-            return super.onOptionsItemSelected(item);
-        } else {
-            switch (item.getItemId()) {
-                case R.id.action_delete_alarm:
-                    showDialogFragment(DELETE_CONFIRM);
-
-                    return true;
-                default:
-                    return super.onOptionsItemSelected(item);
-            }
+        switch (item.getItemId()) {
+            case R.id.action_delete_alarm:
+                showDialogFragment(DELETE_CONFIRM);
+                return true;
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
