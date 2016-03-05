@@ -20,7 +20,7 @@
       android:label="@string/app_name">
     <activity
         android:name="io.github.carlorodriguez.alarmon.ActivityAlarmClock"
-        android:theme="@style/AppThemeDark"
+        android:theme="@style/MainAppThemeDark"
         android:launchMode="singleTask">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>

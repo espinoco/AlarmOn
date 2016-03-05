@@ -1,0 +1,23 @@
+<resources>>
+
+<style name="MainAppThemeDark" parent="AppThemeDark" >
+  <item name="windowActionBar">false</item>
+  <item name="windowNoTitle">true</item>
+  <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+  <item name="android:statusBarColor">@android:color/transparent</item>
+</style>
+
+<style name="MainAppThemeLight" parent="AppThemeLight" >
+  <item name="windowActionBar">false</item>
+  <item name="windowNoTitle">true</item>
+  <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+</style>
+
+<style name="MainAppThemeLightDarkActionBar" parent="AppThemeLightDarkActionBar" >
+  <item name="windowActionBar">false</item>
+  <item name="windowNoTitle">true</item>
+  <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+  <item name="android:statusBarColor">@android:color/transparent</item>
+</style>
+
+</resources>
