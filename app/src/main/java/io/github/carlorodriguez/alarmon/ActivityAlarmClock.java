@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -352,6 +353,14 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
     private void redraw() {
         // Recompute expiration times in the list view
         adapter.notifyDataSetChanged();
+
+        Calendar now = Calendar.getInstance();
+
+        AlarmTime time = new AlarmTime(now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE), 0);
+
+        ((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout)).setTitle(
+                time.localizedString(this));
     }
 
     public static class ActivityDialogFragment extends DialogFragment {
