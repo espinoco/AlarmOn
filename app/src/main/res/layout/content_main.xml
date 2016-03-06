@@ -10,10 +10,10 @@
       android:id="@+id/alarm_list"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginTop="200dp"
+      android:layout_marginTop="170dp"
       android:paddingLeft="10dp"
       android:paddingRight="10dp"
-      android:paddingBottom="100dp"
+      android:paddingBottom="40dp"
       android:clipToPadding="false"
       tools:context=".ActivityAlarmClock" />
 
