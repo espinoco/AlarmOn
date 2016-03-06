@@ -4,7 +4,7 @@
   <string name="app_name">AlarmOn</string>
   <string name="add_alarm">Agregar alarma</string>
   <string name="default_settings">Opciones de alarma por defecto</string>
-  <string name="app_settings">Ajuste de aplicaciones</string>
+  <string name="app_settings">Configuración</string>
   <string name="delete_all">Borrar todo</string>
   <string name="settings">Ajustes</string>
   <string name="time">Hora</string>
@@ -28,7 +28,7 @@
   <string name="ok">OK</string>
   <string name="cancel">Cancelar</string>
   <string name="delete">Borrar</string>
-  <string name="confirm_delete">Confirma borrado?</string>
+  <string name="confirm_delete">¿Confirma borrado?</string>
   <string name="snooze">SNOOZE</string>
   <string name="dismiss">DESCARTAR</string>
   <string name="plus_five">+5</string>
