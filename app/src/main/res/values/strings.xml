@@ -3,7 +3,7 @@
   <string name="app_name">AlarmOn</string>
   <string name="add_alarm">Add alarm</string>
   <string name="default_settings">Default Alarm Settings</string>
-  <string name="app_settings">Application Settings</string>
+  <string name="app_settings">Settings</string>
   <string name="delete_all">Delete All</string>
   <string name="settings">Settings</string>
   <string name="time">Time</string>
@@ -123,6 +123,7 @@
   <string name="grey">Grey</string>
   <string name="blue_grey">Blue Grey</string>
   <string name="about">About</string>
+  <string name="settings_about_key">io.github.carlorodriguez.alarmon.ABOUT</string>
   <string name="selected_media">&#160;%1$s</string>
   <string name="volume_start_label">Start volume: %1$d%%</string>
   <string name="volume_end_label">End volume: %1$d%%</string>

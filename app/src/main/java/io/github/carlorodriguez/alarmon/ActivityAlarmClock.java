@@ -311,12 +311,6 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
                 startActivity(app_settings);
                 break;
-            case R.id.action_about:
-                Intent about = new Intent(getApplicationContext(),
-                        AboutActivity.class);
-
-                startActivity(about);
-                break;
             case ACTION_TEST_ALARM:
                 // Used in debug mode.  Schedules an alarm for 5 seconds in the future
                 // when clicked.

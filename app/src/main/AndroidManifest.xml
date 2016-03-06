@@ -44,10 +44,10 @@
         android:name="io.github.carlorodriguez.alarmon.ActivityPendingAlarms"
         android:theme="@style/AppThemeDark"
         android:finishOnTaskLaunch="true"/>
-      <activity
-          android:name="io.github.carlorodriguez.alarmon.AboutActivity"
-          android:theme="@style/AppThemeDark"
-          android:finishOnTaskLaunch="true"/>
+    <activity
+        android:name=".AboutTabbedActivity"
+        android:theme="@style/AppThemeDark">
+    </activity>
     <service android:name="io.github.carlorodriguez.alarmon.AlarmClockService"/>
     <service android:name="io.github.carlorodriguez.alarmon.NotificationService"/>
     <receiver android:name="io.github.carlorodriguez.alarmon.ReceiverAlarm"/>
