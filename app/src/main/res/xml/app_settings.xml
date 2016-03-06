@@ -58,6 +58,12 @@
       android:entryValues="@array/time_picker_color_values"
       android:defaultValue="teal" />
 
+    <Preference
+        android:persistent="false"
+        android:key="@string/settings_about_key"
+        android:title="@string/about"
+        />
+
   <ListPreference android:persistent="true"
     android:key="DEBUG_MODE"
     android:title="@string/debug_mode_title"

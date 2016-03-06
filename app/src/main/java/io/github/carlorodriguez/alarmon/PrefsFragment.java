@@ -38,7 +38,8 @@ import android.widget.EditText;
  * that make up the global application settings.
  */
 public class PrefsFragment extends PreferenceFragmentCompat implements
-        Preference.OnPreferenceChangeListener {
+        Preference.OnPreferenceChangeListener,
+        Preference.OnPreferenceClickListener {
 
     private static final int CUSTOM_LOCK_SCREEN = 0;
     private static final int CUSTOM_NOTIFICATION_TEXT = 1;
@@ -98,6 +99,19 @@ public class PrefsFragment extends PreferenceFragmentCompat implements
 
         findPreference(AppSettings.NOTIFICATION_TEXT).
                 setOnPreferenceChangeListener(this);
+
+        findPreference(getString(R.string.settings_about_key)).
+                setOnPreferenceClickListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if (preference.getKey().equalsIgnoreCase(getString(
+                R.string.settings_about_key))) {
+            startActivity(new Intent(getActivity(), AboutTabbedActivity.class));
+            return true;
+        }
+        return false;
     }
 
     @Override

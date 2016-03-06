@@ -22,11 +22,4 @@
       app:showAsAction="never"
       />
 
-  <item
-      android:id="@+id/action_about"
-      android:title="@string/about"
-      android:orderInCategory="4"
-      app:showAsAction="never"
-      />
-
 </menu>
