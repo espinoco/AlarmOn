@@ -23,14 +23,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -69,11 +70,16 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AppSettings.setTheme(getBaseContext(), ActivityAlarmClock.this);
+        AppSettings.setMainActivityTheme(getBaseContext(),
+                ActivityAlarmClock.this);
 
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.alarm_list);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
 
         activityAlarmClock = this;
 
@@ -160,22 +166,6 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
                 picker.setTitle(time.timeUntilString(ActivityAlarmClock.this));
 
                 picker.show(getFragmentManager(), "TimePickerDialog");
-            }
-        });
-
-        alarmList.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem > 0) {
-                    fab.hide();
-                } else {
-                    fab.show();
-                }
             }
         });
 
@@ -363,6 +353,14 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
     private void redraw() {
         // Recompute expiration times in the list view
         adapter.notifyDataSetChanged();
+
+        Calendar now = Calendar.getInstance();
+
+        AlarmTime time = new AlarmTime(now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE), 0);
+
+        ((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout)).setTitle(
+                time.localizedString(this));
     }
 
     public static class ActivityDialogFragment extends DialogFragment {

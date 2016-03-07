@@ -6,6 +6,8 @@
     <attr name="customSettingsItemTitle" format="reference" />
     <attr name="customTimeIcon" format="reference" />
     <attr name="customDivider" format="reference" />
+    <attr name="customAppBarOverlay" format="reference" />
+    <attr name="customPopupOverlay" format="reference" />
     <attr name="customTitlePageIndicatorText" format="reference" />
     <attr name="customTitlePageIndicatorSelectedText" format="reference" />
   </declare-styleable>

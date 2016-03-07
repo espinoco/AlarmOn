@@ -158,6 +158,22 @@ public final class AppSettings {
         }
     }
 
+    public static void setMainActivityTheme(Context context, Activity activity) {
+        SharedPreferences sharedPref = PreferenceManager.
+                getDefaultSharedPreferences(context);
+
+        String theme = sharedPref.getString(APP_THEME_KEY, "0");
+
+        switch (theme) {
+            case "1":
+                activity.setTheme(R.style.MainAppThemeLight);
+                break;
+            case "2":
+                activity.setTheme(R.style.MainAppThemeLightDarkActionBar);
+                break;
+        }
+    }
+
     public static boolean isThemeDark(Context context) {
         SharedPreferences sharedPref = PreferenceManager.
                 getDefaultSharedPreferences(context);
