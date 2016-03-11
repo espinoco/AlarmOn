@@ -27,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -368,15 +369,21 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
         picker.setTitle(time.timeUntilString(this));
     }
 
+    public static void _requestReadExternalStoragePermission(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[] {
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                    }, READ_EXTERNAL_STORAGE_PERMISSION_REQUEST);
+        }
+    }
+
     public void requestReadExternalStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
             showDialogFragment(EXPLAIN_READ_EXTERNAL_STORAGE);
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[] {
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    }, READ_EXTERNAL_STORAGE_PERMISSION_REQUEST);
+            _requestReadExternalStoragePermission(this);
         }
     }
 
@@ -814,10 +821,7 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
                 public void onClick(DialogInterface dialog, int which) {
                     dismiss();
 
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{
-                                    Manifest.permission.READ_EXTERNAL_STORAGE
-                            }, READ_EXTERNAL_STORAGE_PERMISSION_REQUEST);
+                    _requestReadExternalStoragePermission(getActivity());
                 }
             });
 
