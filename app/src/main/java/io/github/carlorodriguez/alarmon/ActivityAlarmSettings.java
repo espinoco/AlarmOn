@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -43,10 +44,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -146,40 +145,6 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     }
     originalSettings = db.readAlarmSettings(alarmId);
     settings = new AlarmSettings(originalSettings);
-
-    // Setup individual UI elements.
-    // Positive acknowledgment button.
-    final Button okButton = (Button) findViewById(R.id.settings_ok);
-    okButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        // Write AlarmInfo if it changed.
-        if (originalInfo != null && !originalInfo.equals(info)) {
-          db.writeAlarmInfo(alarmId, info);
-          // Explicitly enable the alarm if the user changed the time.
-          // This will reschedule the alarm if it was already enabled.
-          // It's also probably the right thing to do if the alarm wasn't
-          // enabled.
-          if (!originalInfo.getTime().equals(info.getTime())) {
-            service.scheduleAlarm(alarmId);
-          }
-        }
-        // Write AlarmSettings if they have changed.
-        if (!originalSettings.equals(settings)) {
-          db.writeAlarmSettings(alarmId, settings);
-        }
-        finish();
-      }
-    });
-
-    // Negative acknowledgment button.
-    final Button cancelButton = (Button) findViewById(R.id.settings_cancel);
-    cancelButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        finish();
-      }
-    });
 
     // Setup the list of settings.  Each setting is represented by a Setting
     // object.  Create one here for each setting type.
@@ -290,6 +255,8 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
                 showDialogFragment(DELETE_CONFIRM);
                 return true;
             case android.R.id.home:
+                saveAlarmSettings();
+
                 finish();
                 return true;
             default:
@@ -297,7 +264,14 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
         }
     }
 
-  @Override
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        saveAlarmSettings();
+    }
+
+    @Override
   protected void onResume() {
     super.onResume();
     service.bind();
@@ -367,6 +341,26 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
                 infoTime.getDaysOfWeek());
 
         picker.setTitle(time.timeUntilString(this));
+    }
+
+    private void saveAlarmSettings() {
+        // Write AlarmInfo if it changed.
+        if (originalInfo != null && !originalInfo.equals(info)) {
+            db.writeAlarmInfo(alarmId, info);
+
+            // Explicitly enable the alarm if the user changed the time.
+            // This will reschedule the alarm if it was already enabled.
+            // It's also probably the right thing to do if the alarm wasn't
+            // enabled.
+            if (!originalInfo.getTime().equals(info.getTime())) {
+                service.scheduleAlarm(alarmId);
+            }
+        }
+
+        // Write AlarmSettings if they have changed.
+        if (!originalSettings.equals(settings)) {
+            db.writeAlarmSettings(alarmId, settings);
+        }
     }
 
     public static void _requestReadExternalStoragePermission(Activity activity) {
