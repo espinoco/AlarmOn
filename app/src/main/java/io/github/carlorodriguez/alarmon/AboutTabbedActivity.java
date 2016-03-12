@@ -168,7 +168,7 @@ public class AboutTabbedActivity extends AppCompatActivity {
                 case 1:
                     return "LICENSE";
                 case 2:
-                    return "SOURCES";
+                    return "SOURCE CODE";
                 case 3:
                     return "LIBRARIES";
                 case 4:
