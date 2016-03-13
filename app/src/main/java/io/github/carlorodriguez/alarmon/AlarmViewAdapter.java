@@ -21,12 +21,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.RemoteException;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 /**
@@ -67,7 +67,7 @@ public final class AlarmViewAdapter extends ArrayAdapter<AlarmInfo> {
     TextView nextView = (TextView) view.findViewById(R.id.next_alarm);
     TextView labelView = (TextView) view.findViewById(R.id.alarm_label);
     TextView repeatView = (TextView) view.findViewById(R.id.alarm_repeat);
-    CheckBox enabledView = (CheckBox) view.findViewById(R.id.alarm_enabled);
+    SwitchCompat enabledView = (SwitchCompat) view.findViewById(R.id.alarm_enabled);
 
     final AlarmInfo info = getItem(position);
 
@@ -100,19 +100,22 @@ public final class AlarmViewAdapter extends ArrayAdapter<AlarmInfo> {
     if (!info.getTime().getDaysOfWeek().equals(Week.NO_REPEATS)) {
       repeatView.setText(info.getTime().getDaysOfWeek().toString(getContext()));
     }
-    enabledView.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        CheckBox check = (CheckBox) v;
-        if (check.isChecked()) {
-          service.scheduleAlarm(info.getAlarmId());
-          requery();
-        } else {
-          service.unscheduleAlarm(info.getAlarmId());
-          requery();
-        }
-      }
-    });
+
+      enabledView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+          @Override
+          public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+              if (isChecked) {
+                  info.setEnabled(true);
+
+                  service.scheduleAlarm(info.getAlarmId());
+              } else {
+                  info.setEnabled(false);
+
+                  service.unscheduleAlarm(info.getAlarmId());
+              }
+          }
+      });
+
     return view;
   }
 }

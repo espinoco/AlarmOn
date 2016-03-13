@@ -58,7 +58,8 @@
     </LinearLayout>
   </LinearLayout>
 
-  <CheckBox android:id="@+id/alarm_enabled"
+  <android.support.v7.widget.SwitchCompat
+    android:id="@+id/alarm_enabled"
     android:focusable="false"
     android:gravity="center_vertical"
     android:layout_width="wrap_content"
