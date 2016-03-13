@@ -16,6 +16,7 @@
 package io.github.carlorodriguez.alarmon;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -120,7 +121,11 @@ public final class AlarmTime implements Parcelable, Comparable<AlarmTime> {
     }
     AlarmTime rhs = (AlarmTime) o;
 
-    return calendar.equals(rhs.calendar) && this.daysOfWeek.equals(rhs.daysOfWeek);
+      return calendar.get(Calendar.HOUR_OF_DAY) == rhs.calendar().get(Calendar.HOUR_OF_DAY)
+              && calendar.get(Calendar.MINUTE) == rhs.calendar().get(Calendar.MINUTE)
+              && calendar.get(Calendar.SECOND) == rhs.calendar().get(Calendar.SECOND)
+              && Arrays.equals(getDaysOfWeek().bitmask(),
+              rhs.getDaysOfWeek().bitmask());
   }
 
   public String toString() {
