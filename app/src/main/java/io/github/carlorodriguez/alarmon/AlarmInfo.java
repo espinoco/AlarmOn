@@ -99,6 +99,10 @@ public final class AlarmInfo {
     this.time = time;
   }
 
+    public void setDaysOfWeek(Week week) {
+        time.setDaysOfWeek(week);
+    }
+
   public boolean enabled() {
     return enabled;
   }

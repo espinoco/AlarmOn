@@ -75,6 +75,10 @@ public final class AlarmTime implements Parcelable, Comparable<AlarmTime> {
     findNextOccurrence();
   }
 
+    public void setDaysOfWeek(Week week) {
+        daysOfWeek = week;
+    }
+
   private void findNextOccurrence() {
     Calendar now = Calendar.getInstance();
 

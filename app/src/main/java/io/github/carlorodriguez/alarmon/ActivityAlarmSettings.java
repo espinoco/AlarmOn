@@ -77,6 +77,17 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
   private static final int MISSING_EXTRAS = -69;
     private static final int READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 0;
     private static final String SETTINGS_VIBRATE_KEY = "SETTINGS_VIBRATE_KEY";
+    private static final String SETTINGS_SNOOZE_KEY = "SETTINGS_SNOOZE_KEY";
+    private static final String SETTINGS_TIME_HOUR_OF_DAY_KEY = "SETTINGS_TIME_HOUR_OF_DAY_KEY";
+    private static final String SETTINGS_TIME_MINUTE_KEY = "SETTINGS_TIME_MINUTE_KEY";
+    private static final String SETTINGS_TIME_SECOND_KEY = "SETTINGS_TIME_SECOND_KEY";
+    private static final String SETTINGS_NAME_KEY = "SETTINGS_NAME_KEY";
+    private static final String SETTINGS_VOLUME_START_PERCENT_KEY = "SETTINGS_VOLUME_START_PERCENT_KEY";
+    private static final String SETTINGS_VOLUME_END_PERCENT_KEY = "SETTINGS_VOLUME_END_PERCENT_KEY";
+    private static final String SETTINGS_VOLUME_CHANGE_TIME_SEC_KEY = "SETTINGS_VOLUME_CHANGE_TIME_SEC_KEY";
+    private static final String SETTINGS_TONE_NAME_KEY = "SETTINGS_TONE_NAME_KEY";
+    private static final String SETTINGS_TONE_URI_KEY = "SETTINGS_TONE_URI_KEY";
+    private static final String SETTINGS_DAYS_OF_WEEK_KEY = "SETTINGS_DAYS_OF_WEEK_KEY";
 
   private enum SettingType {
     TIME,
@@ -97,8 +108,6 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     public static final int PERMISSION_NOT_GRANTED = 8;
 
     private TimePickerDialog picker;
-
-    private SwitchCompat mVibrateSwitch;
 
   private static long alarmId;
   private static AlarmClockServiceBinder service;
@@ -142,9 +151,64 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     // Info will not be available for the default settings.
     if (originalInfo != null) {
       info = new AlarmInfo(originalInfo);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(SETTINGS_TIME_HOUR_OF_DAY_KEY)
+                    && savedInstanceState.containsKey(SETTINGS_TIME_MINUTE_KEY)
+                    && savedInstanceState.containsKey(SETTINGS_TIME_SECOND_KEY)) {
+                final AlarmTime time = info.getTime();
+
+                info.setTime(new AlarmTime(
+                                savedInstanceState.getInt(SETTINGS_TIME_HOUR_OF_DAY_KEY),
+                                savedInstanceState.getInt(SETTINGS_TIME_MINUTE_KEY),
+                                savedInstanceState.getInt(SETTINGS_TIME_SECOND_KEY),
+                                time.getDaysOfWeek()
+                        ));
+            }
+
+            if (savedInstanceState.containsKey(SETTINGS_NAME_KEY)) {
+                info.setName(savedInstanceState.getString(SETTINGS_NAME_KEY));
+            }
+
+            if (savedInstanceState.containsKey(SETTINGS_DAYS_OF_WEEK_KEY)) {
+                info.setDaysOfWeek(new Week(savedInstanceState.getBooleanArray(
+                        SETTINGS_DAYS_OF_WEEK_KEY)));
+            }
+        }
     }
     originalSettings = db.readAlarmSettings(alarmId);
     settings = new AlarmSettings(originalSettings);
+
+      if (savedInstanceState != null) {
+          if (savedInstanceState.containsKey(SETTINGS_SNOOZE_KEY)) {
+              settings.setSnoozeMinutes(savedInstanceState.getInt(
+                      SETTINGS_SNOOZE_KEY));
+          }
+
+          if (savedInstanceState.containsKey(SETTINGS_VIBRATE_KEY)) {
+              settings.setVibrate(savedInstanceState.getBoolean(
+                      SETTINGS_VIBRATE_KEY));
+          }
+
+          if (savedInstanceState.containsKey(SETTINGS_VOLUME_START_PERCENT_KEY)
+                  && savedInstanceState.containsKey(SETTINGS_VOLUME_END_PERCENT_KEY)
+                  && savedInstanceState.containsKey(SETTINGS_VOLUME_CHANGE_TIME_SEC_KEY)) {
+              settings.setVolumeStartPercent(savedInstanceState.getInt(
+                      SETTINGS_VOLUME_START_PERCENT_KEY));
+
+              settings.setVolumeEndPercent(savedInstanceState.getInt(
+                      SETTINGS_VOLUME_END_PERCENT_KEY));
+
+              settings.setVolumeChangeTimeSec(savedInstanceState.getInt(
+                      SETTINGS_VOLUME_CHANGE_TIME_SEC_KEY));
+          }
+
+          if (savedInstanceState.containsKey(SETTINGS_TONE_URI_KEY)
+                  && savedInstanceState.containsKey(SETTINGS_TONE_NAME_KEY)) {
+              settings.setTone((Uri) savedInstanceState.getParcelable(SETTINGS_TONE_URI_KEY),
+                      savedInstanceState.getString(SETTINGS_TONE_NAME_KEY));
+          }
+      }
 
     // Setup the list of settings.  Each setting is represented by a Setting
     // object.  Create one here for each setting type.
@@ -230,7 +294,7 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
 
     final ListView settingsList = (ListView) findViewById(R.id.settings_list);
     settingsAdapter = new SettingsAdapter(getApplicationContext(),
-            settingsObjects, savedInstanceState);
+            settingsObjects);
     settingsList.setAdapter(settingsAdapter);
     settingsList.setOnItemClickListener(new SettingsListClickListener());
   }
@@ -319,9 +383,40 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (mVibrateSwitch != null) {
-            outState.putBoolean(SETTINGS_VIBRATE_KEY, mVibrateSwitch.isChecked());
+        outState.putBoolean(SETTINGS_VIBRATE_KEY, settings.getVibrate());
+
+        outState.putInt(SETTINGS_SNOOZE_KEY, settings.getSnoozeMinutes());
+
+        if (originalInfo != null && info != null) {
+            final AlarmTime infoTime = info.getTime();
+
+            outState.putInt(SETTINGS_TIME_HOUR_OF_DAY_KEY,
+                    infoTime.calendar().get(Calendar.HOUR_OF_DAY));
+
+            outState.putInt(SETTINGS_TIME_MINUTE_KEY,
+                    infoTime.calendar().get(Calendar.MINUTE));
+
+            outState.putInt(SETTINGS_TIME_SECOND_KEY,
+                    infoTime.calendar().get(Calendar.SECOND));
+
+            outState.putString(SETTINGS_NAME_KEY, info.getName());
+
+            outState.putBooleanArray(SETTINGS_DAYS_OF_WEEK_KEY,
+                    info.getTime().getDaysOfWeek().bitmask());
         }
+
+        outState.putParcelable(SETTINGS_TONE_URI_KEY, settings.getTone());
+
+        outState.putString(SETTINGS_TONE_NAME_KEY, settings.getToneName());
+
+        outState.putInt(SETTINGS_VOLUME_START_PERCENT_KEY,
+                settings.getVolumeStartPercent());
+
+        outState.putInt(SETTINGS_VOLUME_END_PERCENT_KEY,
+                settings.getVolumeEndPercent());
+
+        outState.putInt(SETTINGS_VOLUME_CHANGE_TIME_SEC_KEY,
+                settings.getVolumeChangeTimeSec());
     }
 
     @Override
@@ -472,14 +567,11 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
     private final class SettingsAdapter extends ArrayAdapter<Setting> {
 
         List<Setting> settingsObjects;
-        private Bundle savedInstanceState;
 
-        public SettingsAdapter(Context context, List<Setting> settingsObjects,
-               Bundle savedInstanceState) {
+        public SettingsAdapter(Context context, List<Setting> settingsObjects) {
             super(context, 0, settingsObjects);
 
             this.settingsObjects = settingsObjects;
-            this.savedInstanceState = savedInstanceState;
         }
 
         @Override
@@ -501,8 +593,7 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
 
             convertView.setTag(holder);
 
-			holder.populateFrom(settingsObjects.get(position),
-                    savedInstanceState);
+			holder.populateFrom(settingsObjects.get(position));
 
 			return(convertView);
         }
@@ -517,31 +608,21 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
             this.row = row;
 		}
 
-		void populateFrom(Setting setting, Bundle savedInstanceState) {
+		void populateFrom(Setting setting) {
             ((TextView) row.findViewById(R.id.setting_name)).
                     setText(setting.name());
 
             if (setting.name().equalsIgnoreCase(getString(R.string.vibrate))) {
-                mVibrateSwitch = (SwitchCompat) row.findViewById(
+                SwitchCompat vibrateSwitch = (SwitchCompat) row.findViewById(
                         R.id.setting_vibrate_sc);
 
-                if (savedInstanceState != null) {
-                    if (savedInstanceState.containsKey(SETTINGS_VIBRATE_KEY)) {
-                        mVibrateSwitch.setChecked(savedInstanceState.getBoolean(
-                                SETTINGS_VIBRATE_KEY));
-
-                        settings.setVibrate(savedInstanceState.getBoolean(
-                                SETTINGS_VIBRATE_KEY));
-                    }
+                if (settings.getVibrate()) {
+                    vibrateSwitch.setChecked(true);
                 } else {
-                    if (settings.getVibrate()) {
-                        mVibrateSwitch.setChecked(true);
-                    } else {
-                        mVibrateSwitch.setChecked(false);
-                    }
+                    vibrateSwitch.setChecked(false);
                 }
 
-                mVibrateSwitch.setOnCheckedChangeListener(
+                vibrateSwitch.setOnCheckedChangeListener(
                         new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -618,12 +699,12 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
                               } else {
                                   info.getTime().getDaysOfWeek().removeDay(Week.Day.values()[which]);
                               }
+                              settingsAdapter.notifyDataSetChanged();
                           }
                       });
               dowBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
-                      settingsAdapter.notifyDataSetChanged();
                       dismiss();
                   }
               });
