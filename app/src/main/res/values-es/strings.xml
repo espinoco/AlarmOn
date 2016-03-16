@@ -125,4 +125,6 @@
   <string name="volume_start_label">Volumen inicial: %1$d%%</string>
   <string name="volume_end_label">Volumen final: %1$d%%</string>
   <string name="volume_duration_label">Duración: %1$d segundos</string>
+  <string name="loading">Cargando</string>
+  <string name="please_wait">Por favor espere</string>
 </resources>

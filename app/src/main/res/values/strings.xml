@@ -128,4 +128,6 @@
   <string name="volume_start_label">Start volume: %1$d%%</string>
   <string name="volume_end_label">End volume: %1$d%%</string>
   <string name="volume_duration_label">Duration: %1$d seconds</string>
+  <string name="loading">Loading</string>
+  <string name="please_wait">Please wait</string>
 </resources>

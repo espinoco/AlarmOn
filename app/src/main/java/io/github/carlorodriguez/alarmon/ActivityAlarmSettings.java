@@ -23,6 +23,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -117,6 +118,7 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
   private static AlarmSettings originalSettings;
   private static AlarmSettings settings;
   static SettingsAdapter settingsAdapter;
+    private static ProgressDialog progressDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -362,6 +364,12 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
   protected void onDestroy() {
     super.onDestroy();
     db.closeConnections();
+
+      if (progressDialog != null) {
+          progressDialog.dismiss();
+      }
+
+      progressDialog = null;
   }
 
     @Override
@@ -372,6 +380,8 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
                     permissions[0].equals(
                             Manifest.permission.READ_EXTERNAL_STORAGE)
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showProgressDialog();
+
                 showDialogFragment(TONE_PICKER);
             } else {
                 showDialogFragment(PERMISSION_NOT_GRANTED);
@@ -531,6 +541,8 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
             if (ContextCompat.checkSelfPermission(ActivityAlarmSettings.this,
                     Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
+                showProgressDialog();
+
                 showDialogFragment(TONE_PICKER);
             } else {
                 requestReadExternalStoragePermission();
@@ -547,6 +559,12 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
       }
     }
   }
+
+    private void showProgressDialog() {
+        progressDialog = ProgressDialog.show(ActivityAlarmSettings.this,
+                getString(R.string.loading),
+                getString(R.string.please_wait), true, true);
+    }
 
   /**
    * A helper interface to encapsulate the data displayed in the list view of
@@ -712,6 +730,16 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
 
           case TONE_PICKER:
               MediaPickerDialog mediaPicker = new MediaPickerDialog(getActivity());
+              mediaPicker.setOnShowListener(new DialogInterface.OnShowListener() {
+                  @Override
+                  public void onShow(DialogInterface dialog) {
+                      if (progressDialog != null) {
+                          progressDialog.dismiss();
+
+                          progressDialog = null;
+                      }
+                  }
+              });
               mediaPicker.setPickListener(new MediaPickerDialog.OnMediaPickListener() {
                   @Override
                   public void onMediaPick(String name, Uri media) {
