@@ -87,8 +87,8 @@ public class NotificationService extends Service {
     private void resetVolume(Context c) {
       final AudioManager audio =
         (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
-      audio.setStreamVolume(
-          AudioManager.STREAM_ALARM, systemNotificationVolume, 0);
+      audio.setStreamVolume(AudioManager.STREAM_ALARM, systemNotificationVolume,
+              0);
     }
 
     private void useContext(Context c) {
@@ -149,6 +149,10 @@ public class NotificationService extends Service {
         fallbackSound.stop();
       }
     }
+
+      public void release() {
+          mediaPlayer.release();
+      }
   }
 
   // Data
@@ -265,6 +269,8 @@ public class NotificationService extends Service {
     } catch (WakeLock.WakeLockException e) {
       if (debug) { throw new IllegalStateException(e.getMessage()); }
     }
+
+      MediaSingleton.INSTANCE.release();
   }
 
   @Override
