@@ -90,9 +90,6 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
         handler = new Handler();
 
-        notifyService = new NotificationServiceBinder(getApplicationContext());
-
-
         // Setup the alarm list and the underlying adapter. Clicking an individual
         // item will start the settings activity.
         final ListView alarmList = (ListView) findViewById(R.id.alarm_list);
@@ -202,6 +199,8 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
         handler.post(tickCallback);
 
         adapter.requery();
+
+        notifyService = new NotificationServiceBinder(getApplicationContext());
 
         notifyService.bind();
 
