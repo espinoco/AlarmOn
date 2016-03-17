@@ -18,4 +18,6 @@
   <item name="grey" type="color">#757575</item>
   <item name="blue_grey" type="color">#78909c</item>
   <item name="notification_color" type="color">#1e88e5</item>
+  <item name="card_view_black" type="color">#292929</item>
+  <item name="card_view_white" type="color">#ffffff</item>
 </resources>

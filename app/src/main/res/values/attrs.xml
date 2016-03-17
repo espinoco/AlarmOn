@@ -10,5 +10,6 @@
     <attr name="customPopupOverlay" format="reference" />
     <attr name="customTitlePageIndicatorText" format="reference" />
     <attr name="customTitlePageIndicatorSelectedText" format="reference" />
+    <attr name="customCardBackgroundColor" format="reference" />
   </declare-styleable>
 </resources>

@@ -19,6 +19,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -27,18 +28,18 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.wdullaer.materialdatetimepicker.time.*;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -64,9 +65,12 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
     private static AlarmClockServiceBinder service;
     private static NotificationServiceBinder notifyService;
     private DbAccessor db;
-    private static AlarmViewAdapter adapter;
+    private static AlarmAdapter adapter;
+    private Cursor cursor;
     private Handler handler;
     private Runnable tickCallback;
+    private RecyclerView alarmList;
+    private int mLastFirstVisiblePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,40 +96,13 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
         // Setup the alarm list and the underlying adapter. Clicking an individual
         // item will start the settings activity.
-        final ListView alarmList = (ListView) findViewById(R.id.alarm_list);
+        alarmList = (RecyclerView) findViewById(R.id.alarm_list);
 
-        adapter = new AlarmViewAdapter(this, db, service);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
-        alarmList.setAdapter(adapter);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        alarmList.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view,
-                                    int position, long id) {
-                final AlarmInfo info = (AlarmInfo)
-                        adapter.getItemAtPosition(position);
-
-                final Intent i = new Intent(getApplicationContext(),
-                        ActivityAlarmSettings.class);
-
-                i.putExtra(ActivityAlarmSettings.EXTRAS_ALARM_ID,
-                        info.getAlarmId());
-
-                startActivity(i);
-            }
-        });
-
-        alarmList.setOnItemLongClickListener(new AdapterView.
-                OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                showDialogFragment(DELETE_ALARM_CONFIRM,
-                        (AlarmInfo) parent.getItemAtPosition(position));
-
-                return true;
-            }
-        });
+        alarmList.setLayoutManager(layoutManager);
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_fab);
 
@@ -198,7 +175,9 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
         handler.post(tickCallback);
 
-        adapter.requery();
+        requery();
+
+        alarmList.getLayoutManager().scrollToPosition(mLastFirstVisiblePosition);
 
         notifyService = new NotificationServiceBinder(getApplicationContext());
 
@@ -249,6 +228,10 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
         if (notifyService != null) {
             notifyService.unbind();
         }
+
+        mLastFirstVisiblePosition = ((LinearLayoutManager)
+                alarmList.getLayoutManager()).
+                findFirstCompletelyVisibleItemPosition();
     }
 
     @Override
@@ -260,6 +243,8 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
         activityAlarmClock = null;
 
         notifyService = null;
+
+        cursor.close();
     }
 
     @Override
@@ -277,10 +262,11 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
     @Override
     public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
-        service.createAlarm(new AlarmTime(hourOfDay,
-                minute, second));
+        AlarmTime time = new AlarmTime(hourOfDay, minute, second);
 
-        adapter.requery();
+        service.createAlarm(time);
+
+        requery();
     }
 
     @Override
@@ -318,12 +304,14 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
                 testTime.add(Calendar.SECOND, 5);
 
-                service.createAlarm(new AlarmTime(
+                AlarmTime time = new AlarmTime(
                         testTime.get(Calendar.HOUR_OF_DAY),
                         testTime.get(Calendar.MINUTE),
-                        testTime.get(Calendar.SECOND)));
+                        testTime.get(Calendar.SECOND));
 
-                adapter.requery();
+                service.createAlarm(time);
+
+                requery();
                 break;
             case ACTION_PENDING_ALARMS:
                 // Displays a list of pending alarms (only visible in debug mode).
@@ -342,13 +330,6 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
         dialog.show(getFragmentManager(), "ActivityDialogFragment");
     }
 
-    private void showDialogFragment(int id, AlarmInfo info) {
-        DialogFragment dialog = new ActivityDialogFragment().newInstance(
-                id, info);
-
-        dialog.show(getFragmentManager(), "ActivityDialogFragment");
-    }
-
     private void redraw() {
         // Recompute expiration times in the list view
         adapter.notifyDataSetChanged();
@@ -360,6 +341,20 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
         ((CollapsingToolbarLayout) findViewById(R.id.toolbar_layout)).setTitle(
                 time.localizedString(this));
+    }
+
+    private void requery() {
+        cursor = db.readAlarmInfo();
+
+        ArrayList<AlarmInfo> infos = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            infos.add(new AlarmInfo(cursor));
+        }
+
+        adapter = new AlarmAdapter(infos, service, this);
+
+        alarmList.setAdapter(adapter);
     }
 
     public static class ActivityDialogFragment extends DialogFragment {
@@ -376,7 +371,8 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
             return fragment;
         }
 
-        public ActivityDialogFragment newInstance(int id, AlarmInfo info) {
+        public ActivityDialogFragment newInstance(int id, AlarmInfo info,
+                int position) {
             ActivityDialogFragment fragment = new ActivityDialogFragment();
 
             Bundle args = new Bundle();
@@ -384,6 +380,8 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
             args.putInt("id", id);
 
             args.putLong("alarmId", info.getAlarmId());
+
+            args.putInt("position", position);
 
             fragment.setArguments(args);
 
@@ -408,7 +406,7 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
                         public void onClick(DialogInterface dialog, int which) {
                             service.deleteAllAlarms();
 
-                            adapter.requery();
+                            adapter.removeAll();
 
                             dismiss();
                         }
@@ -439,7 +437,7 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
                                     service.deleteAlarm(
                                             getArguments().getLong("alarmId"));
 
-                                    adapter.requery();
+                                    adapter.removeAt(getArguments().getInt("position"));
 
                                     dismiss();
                                 }

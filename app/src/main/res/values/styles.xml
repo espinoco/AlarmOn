@@ -16,6 +16,7 @@
       <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
       <item name="customAppBarOverlay">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
       <item name="customPopupOverlay">@style/ThemeOverlay.AppCompat.Dark</item>
+      <item name="customCardBackgroundColor">@color/card_view_black</item>
     </style>
 
   <style name="AppThemeLight" parent="Theme.AppCompat.Light">
@@ -29,6 +30,7 @@
     <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     <item name="customAppBarOverlay">@style/Theme.AppCompat.Light</item>
     <item name="customPopupOverlay">@style/ThemeOverlay.AppCompat.Light</item>
+    <item name="customCardBackgroundColor">@color/card_view_white</item>
   </style>
 
   <style name="AppThemeLightDarkActionBar"
@@ -43,6 +45,7 @@
     <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     <item name="customAppBarOverlay">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     <item name="customPopupOverlay">@style/ThemeOverlay.AppCompat.Light</item>
+    <item name="customCardBackgroundColor">@color/card_view_white</item>
   </style>
 
   <style name="AppThemeLightNoActionBar"
