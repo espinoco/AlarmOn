@@ -18,24 +18,6 @@ it great. If you're not interested in helping right now that's ok
 too. :) Any feedback you have about using AlarmOn would be greatly
 appreciated.
 
-### Objectives
-
-* Use Android API level 14+.
-
-* Use Android support libraries.
-
-* Fix bugs for existing features.
-
-* Use modern features like floating action buttons, snack bars, etc.
-
-* Keep alive and actualized this awesome app.
-
-### TODO
-
-* Complete xml translations.
-
-* Comments as javadocs documentation and remove trivial comments.
-
 ### Debug mode
 
 There is a debug mode for the debug build type on application
@@ -43,18 +25,11 @@ settings.
 
 # FAQ
 
-### What's a fork?
+#### What's a fork?
 
 In software engineering, a project fork happens when developers take a
 copy of source code from one software package and start independent
 development on it, creating a distinct and separate piece of software.
-
-### Where are the waking up features like solve math problems, take pictures or anything like that to discard the alarm?
-
-I believe alarm clocks are just tools, the responsible for waking you
-up when you desire is yourself, every person is different but I can
-suggest a way of dealing with this and it's called: personal
-development.
 
 # License
 
