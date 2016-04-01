@@ -1,7 +1,7 @@
 # AlarmOn
 
-AlarmOn is an alarm clock for Android. forked from
-[Alarm Klock](https://code.google.com/p/kraigsandroid/) by
+AlarmOn is an alarm clock for Android forked from
+[Alarm Klock](https://play.google.com/store/apps/details?id=com.angrydoughnuts.android.alarmclock) by
 [kraigsandroid](https://github.com/kraigs-android).
 
 <p align="center">
