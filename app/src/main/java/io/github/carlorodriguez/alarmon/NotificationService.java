@@ -269,8 +269,6 @@ public class NotificationService extends Service {
     } catch (WakeLock.WakeLockException e) {
       if (debug) { throw new IllegalStateException(e.getMessage()); }
     }
-
-      MediaSingleton.INSTANCE.release();
   }
 
   @Override
