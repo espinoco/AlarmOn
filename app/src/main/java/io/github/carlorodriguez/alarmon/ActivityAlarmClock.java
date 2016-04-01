@@ -15,6 +15,7 @@
 
 package io.github.carlorodriguez.alarmon;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -69,7 +70,7 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
     private Cursor cursor;
     private Handler handler;
     private Runnable tickCallback;
-    private RecyclerView alarmList;
+    private static RecyclerView alarmList;
     private int mLastFirstVisiblePosition;
 
     @Override
@@ -355,6 +356,20 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
         adapter = new AlarmAdapter(infos, service, this);
 
         alarmList.setAdapter(adapter);
+
+        setEmptyViewIfEmpty(this);
+    }
+
+    public static void setEmptyViewIfEmpty(Activity activity) {
+        if (adapter.getItemCount() == 0) {
+            activity.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+
+            alarmList.setVisibility(View.GONE);
+        } else {
+            activity.findViewById(R.id.empty_view).setVisibility(View.GONE);
+
+            alarmList.setVisibility(View.VISIBLE);
+        }
     }
 
     public static class ActivityDialogFragment extends DialogFragment {
@@ -408,6 +423,8 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
                             adapter.removeAll();
 
+                            setEmptyViewIfEmpty(getActivity());
+
                             dismiss();
                         }
                     });
@@ -438,6 +455,8 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
                                             getArguments().getLong("alarmId"));
 
                                     adapter.removeAt(getArguments().getInt("position"));
+
+                                    setEmptyViewIfEmpty(getActivity());
 
                                     dismiss();
                                 }
