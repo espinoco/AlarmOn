@@ -28,6 +28,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ContentViewH
         this.context = context;
     }
 
+    public ArrayList<AlarmInfo> getAlarmInfos() {
+        return alarmInfos;
+    }
+
     public void removeAt(int position) {
         alarmInfos.remove(position);
 

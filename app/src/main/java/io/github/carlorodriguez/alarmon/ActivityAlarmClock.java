@@ -32,6 +32,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -104,6 +105,24 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         alarmList.setLayoutManager(layoutManager);
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                removeItemFromList(ActivityAlarmClock.this,
+                        adapter.getAlarmInfos().get(viewHolder.getAdapterPosition()).getAlarmId(),
+                        viewHolder.getAdapterPosition());
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+
+        itemTouchHelper.attachToRecyclerView(alarmList);
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_fab);
 
@@ -372,6 +391,14 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
         }
     }
 
+    public static void removeItemFromList(Activity activity, long alarmId, int position) {
+        service.deleteAlarm(alarmId);
+
+        adapter.removeAt(position);
+
+        setEmptyViewIfEmpty(activity);
+    }
+
     public static class ActivityDialogFragment extends DialogFragment {
 
         public ActivityDialogFragment newInstance(int id) {
@@ -451,12 +478,9 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
                                 @Override
                                 public void onClick(DialogInterface dialog,
                                         int which) {
-                                    service.deleteAlarm(
-                                            getArguments().getLong("alarmId"));
-
-                                    adapter.removeAt(getArguments().getInt("position"));
-
-                                    setEmptyViewIfEmpty(getActivity());
+                                    removeItemFromList(getActivity(),
+                                            getArguments().getLong("alarmId"),
+                                            getArguments().getInt("position"));
 
                                     dismiss();
                                 }
