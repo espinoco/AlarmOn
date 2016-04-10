@@ -8,9 +8,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="30dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingBottom="40dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
     tools:showIn="@layout/alarm_list"
     tools:context=".ActivityAlarmClock" />
 
