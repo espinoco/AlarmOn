@@ -39,6 +39,13 @@ public final class AlarmClockInterfaceStub extends AlarmClockInterface.Stub {
   }
 
   @Override
+  public long resurrectAlarm(AlarmTime time, String alarmName, boolean enabled)
+      throws RemoteException {
+    debugToast("RESURRECT ALARM " + time.toString());
+    return service.resurrectAlarm(time, alarmName, enabled);
+  }
+
+  @Override
   public void createAlarm(AlarmTime time) throws RemoteException {
     debugToast("CREATE ALARM " + time.toString());
     service.createAlarm(time);

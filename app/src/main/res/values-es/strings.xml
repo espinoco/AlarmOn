@@ -127,4 +127,6 @@
   <string name="volume_duration_label">Duración: %1$d segundos</string>
   <string name="loading">Cargando</string>
   <string name="please_wait">Por favor espere</string>
+  <string name="alarm_deleted">Alarma eliminada</string>
+  <string name="undo">DESHACER</string>
 </resources>

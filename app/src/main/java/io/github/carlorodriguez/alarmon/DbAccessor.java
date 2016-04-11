@@ -38,8 +38,8 @@ public final class DbAccessor {
     rwDb.close();
   }
 
-  public long newAlarm(AlarmTime time) {
-    AlarmInfo info = new AlarmInfo(time, false, "");
+  public long newAlarm(AlarmTime time, boolean enabled, String name) {
+    AlarmInfo info = new AlarmInfo(time, enabled, name);
 
     long id = rwDb.insert(DbHelper.DB_TABLE_ALARMS, null, info.contentValues());
     if (id < 0) {

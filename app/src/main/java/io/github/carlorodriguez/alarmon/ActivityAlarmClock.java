@@ -27,6 +27,7 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -114,9 +115,25 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                removeItemFromList(ActivityAlarmClock.this,
-                        adapter.getAlarmInfos().get(viewHolder.getAdapterPosition()).getAlarmId(),
+                final AlarmInfo alarmInfo = adapter.getAlarmInfos().
+                        get(viewHolder.getAdapterPosition());
+
+                final long alarmId = alarmInfo.getAlarmId();
+
+                removeItemFromList(ActivityAlarmClock.this, alarmId,
                         viewHolder.getAdapterPosition());
+
+                Snackbar.make(findViewById(R.id.coordinator_layout),
+                        getString(R.string.alarm_deleted), Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.undo), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        undoAlarmDeletion(alarmInfo.getTime(),
+                                db.readAlarmSettings(alarmId),
+                                alarmInfo.getName(), alarmInfo.enabled());
+                    }
+                })
+                .show();
             }
         };
 
@@ -183,6 +200,17 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
                 handler.postDelayed(tickCallback, next);
             }
         };
+    }
+
+    private void undoAlarmDeletion(AlarmTime alarmTime,
+            AlarmSettings alarmSettings, String alarmName, boolean enabled) {
+        long newAlarmId = service.resurrectAlarm(alarmTime, alarmName, enabled);
+
+        if (newAlarmId != AlarmClockServiceBinder.NO_ALARM_ID) {
+            db.writeAlarmSettings(newAlarmId, alarmSettings);
+
+            requery();
+        }
     }
 
     @Override

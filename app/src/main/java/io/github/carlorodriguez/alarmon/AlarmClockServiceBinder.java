@@ -35,6 +35,8 @@ public class AlarmClockServiceBinder {
   private AlarmClockInterface clock;
   private LinkedList<ServiceCallback> callbacks;
 
+  public static final long NO_ALARM_ID = 0;
+
   public AlarmClockServiceBinder(Context context) {
     this.context = context;
     this.callbacks = new LinkedList<>();
@@ -89,6 +91,18 @@ public class AlarmClockServiceBinder {
     } else {
       callbacks.offer(callback);
     }
+  }
+
+  public long resurrectAlarm(AlarmTime time, String alarmName, boolean enabled) {
+    long id = NO_ALARM_ID;
+
+    try {
+      id = clock.resurrectAlarm(time, alarmName, enabled);
+    } catch (RemoteException e) {
+      e.printStackTrace();
+    }
+
+    return id;
   }
 
   public void createAlarm(final AlarmTime time) {

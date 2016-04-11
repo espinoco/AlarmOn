@@ -278,9 +278,13 @@ public final class AlarmClockService extends Service {
     return pendingAlarms.pendingTimes();
   }
 
+    public long resurrectAlarm(AlarmTime time, String alarmName, boolean enabled) {
+        return db.newAlarm(time, enabled, alarmName);
+    }
+
   public void createAlarm(AlarmTime time) {
     // Store the alarm in the persistent database.
-    long alarmId = db.newAlarm(time);
+    long alarmId = db.newAlarm(time, true, "");
     scheduleAlarm(alarmId);
   }
 

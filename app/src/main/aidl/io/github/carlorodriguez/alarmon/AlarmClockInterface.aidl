@@ -4,6 +4,7 @@ import io.github.carlorodriguez.alarmon.AlarmTime;
 
 interface AlarmClockInterface {
   void createAlarm(in AlarmTime time);
+  long resurrectAlarm(in AlarmTime time, in String alarmName, boolean enabled);
   void deleteAlarm(long alarmId);
   void deleteAllAlarms();
   void scheduleAlarm(long alarmId);
