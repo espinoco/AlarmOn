@@ -53,7 +53,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ContentViewH
     }
 
     @Override
-    public void onBindViewHolder(ContentViewHolder holder, int position) {
+    public void onBindViewHolder(ContentViewHolder holder, final int position) {
         final AlarmInfo info = alarmInfos.get(position);
 
         AlarmTime time = null;
@@ -89,6 +89,23 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ContentViewH
         }
 
         holder.enabledView.setChecked(info.enabled());
+
+        holder.enabledView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                final AlarmInfo info = alarmInfos.get(position);
+
+                if (isChecked) {
+                    info.setEnabled(true);
+
+                    service.scheduleAlarm(info.getAlarmId());
+                } else {
+                    info.setEnabled(false);
+
+                    service.unscheduleAlarm(info.getAlarmId());
+                }
+            }
+        });
     }
 
     @Override
@@ -124,24 +141,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ContentViewH
             labelView = (TextView) view.findViewById(R.id.alarm_label);
             repeatView = (TextView) view.findViewById(R.id.alarm_repeat);
             enabledView = (SwitchCompat) view.findViewById(R.id.alarm_enabled);
-
-            enabledView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    final AlarmInfo info = alarmInfos.get(getAdapterPosition());
-
-                    if (isChecked) {
-                        info.setEnabled(true);
-
-                        service.scheduleAlarm(info.getAlarmId());
-                    } else {
-                        info.setEnabled(false);
-
-                        service.unscheduleAlarm(info.getAlarmId());
-                    }
-                }
-            });
-
         }
 
         @Override
