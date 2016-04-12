@@ -3,8 +3,10 @@ package io.github.carlorodriguez.alarmon;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.RemoteException;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
@@ -143,29 +145,49 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ContentViewH
             enabledView = (SwitchCompat) view.findViewById(R.id.alarm_enabled);
         }
 
-        @Override
-        public void onClick(View v) {
+        public void openAlarmSettings(Context context) {
             final AlarmInfo info = alarmInfos.get(getAdapterPosition());
 
-            final Intent i = new Intent(v.getContext(),
-                    ActivityAlarmSettings.class);
+            final Intent i = new Intent(context, ActivityAlarmSettings.class);
 
             i.putExtra(ActivityAlarmSettings.EXTRAS_ALARM_ID,
                     info.getAlarmId());
 
-            v.getContext().startActivity(i);
+            context.startActivity(i);
+        }
+
+        @Override
+        public void onClick(View v) {
+            openAlarmSettings(v.getContext());
         }
 
         @Override
         public boolean onLongClick(View v) {
-            final AlarmInfo info = alarmInfos.get(getAdapterPosition());
+            final CharSequence actions[] = new CharSequence[] {
+                    context.getString(R.string.settings),
+                    context.getString(R.string.delete)
+            };
 
-            DialogFragment dialog = new ActivityAlarmClock.ActivityDialogFragment().newInstance(
-                    ActivityAlarmClock.DELETE_ALARM_CONFIRM, info,
-                    getAdapterPosition());
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setItems(actions, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (actions[which].equals(actions[0])) {
+                        openAlarmSettings(context);
+                    } else if (actions[which].equals(actions[1])) {
+                        final AlarmInfo info = alarmInfos.get(getAdapterPosition());
 
-            dialog.show(((Activity) context).getFragmentManager(),
-                    "ActivityDialogFragment");
+                        DialogFragment delete = new ActivityAlarmClock.ActivityDialogFragment().newInstance(
+                                ActivityAlarmClock.DELETE_ALARM_CONFIRM, info,
+                                getAdapterPosition());
+
+                        delete.show(((Activity) context).getFragmentManager(),
+                                "ActivityDialogFragment");
+                    }
+                }
+            });
+            builder.show();
+
             return true;
         }
     }
