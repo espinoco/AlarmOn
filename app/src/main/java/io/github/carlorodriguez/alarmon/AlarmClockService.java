@@ -279,7 +279,13 @@ public final class AlarmClockService extends Service {
   }
 
     public long resurrectAlarm(AlarmTime time, String alarmName, boolean enabled) {
-        return db.newAlarm(time, enabled, alarmName);
+        long alarmId =  db.newAlarm(time, enabled, alarmName);
+
+        if (enabled) {
+            scheduleAlarm(alarmId);
+        }
+
+        return alarmId;
     }
 
   public void createAlarm(AlarmTime time) {
