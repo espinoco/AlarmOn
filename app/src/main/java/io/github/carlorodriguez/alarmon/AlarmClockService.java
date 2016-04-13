@@ -171,10 +171,24 @@ public final class AlarmClockService extends Service {
       NotificationCompat.Builder builder = new NotificationCompat.Builder(
               getApplicationContext());
 
+      String notificationTitle = getString(R.string.app_name);
+
+      if (pendingAlarms.nextAlarmId() != AlarmClockServiceBinder.NO_ALARM_ID) {
+          DbAccessor db = new DbAccessor(getApplicationContext());
+
+          AlarmInfo alarmInfo = db.readAlarmInfo(pendingAlarms.nextAlarmId());
+
+          if (alarmInfo != null) {
+              notificationTitle = alarmInfo.getName() != null && !alarmInfo.getName().isEmpty()
+                      ? alarmInfo.getName()
+                      : getString(R.string.app_name);
+          }
+      }
+
       Notification notification = builder
               .setContentIntent(launch)
               .setSmallIcon(R.drawable.ic_stat_notify_alarm)
-              .setContentTitle(getString(R.string.app_name))
+              .setContentTitle(notificationTitle)
               .setContentText(resolvedString)
               .setColor(ContextCompat.getColor(getApplicationContext(),
                       R.color.notification_color))

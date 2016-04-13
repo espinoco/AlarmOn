@@ -127,6 +127,13 @@ public final class PendingAlarmList {
     return alarmTimes.firstKey();
   }
 
+    public long nextAlarmId() {
+        if (alarmTimes.size() == 0) {
+            return AlarmClockServiceBinder.NO_ALARM_ID;
+        }
+        return alarmTimes.get(alarmTimes.firstKey());
+    }
+
   public AlarmTime pendingTime(long alarmId) {
     PendingAlarm alarm = pendingAlarms.get(alarmId);
     return alarm == null ? null : alarm.time();

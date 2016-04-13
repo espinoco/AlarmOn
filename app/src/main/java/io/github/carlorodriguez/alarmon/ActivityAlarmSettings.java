@@ -459,6 +459,9 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
             // enabled.
             if (!originalInfo.getTime().equals(info.getTime())) {
                 service.scheduleAlarm(alarmId);
+            } else if (originalInfo.enabled()
+                    && !originalInfo.getName().equals(info.getName())) {
+                service.scheduleAlarm(alarmId);
             }
         }
 
