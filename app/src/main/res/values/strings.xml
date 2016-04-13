@@ -132,4 +132,5 @@
   <string name="please_wait">Please wait</string>
   <string name="alarm_deleted">Alarm deleted</string>
   <string name="undo">UNDO</string>
+  <string name="swipe_right_to_delete">Hi There! Swipe right this card and see what happens.</string>
 </resources>

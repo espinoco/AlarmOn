@@ -129,4 +129,5 @@
   <string name="please_wait">Por favor espere</string>
   <string name="alarm_deleted">Alarma eliminada</string>
   <string name="undo">DESHACER</string>
+  <string name="swipe_right_to_delete">Hola! desliza hacia la derecha este elemento y ve lo que sucede.</string>
 </resources>
