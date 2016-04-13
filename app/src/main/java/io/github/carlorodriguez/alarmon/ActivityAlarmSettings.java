@@ -370,6 +370,10 @@ public final class ActivityAlarmSettings extends AppCompatActivity implements
       }
 
       progressDialog = null;
+
+      picker = null;
+
+      settingsAdapter = null;
   }
 
     @Override
