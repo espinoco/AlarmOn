@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -449,6 +450,11 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
     }
 
     public static void removeItemFromList(Activity activity, long alarmId, int position) {
+        if (adapter.getItemCount() == 1) {
+            ((AppBarLayout) activity.findViewById(R.id.app_bar)).
+                    setExpanded(true);
+        }
+
         service.deleteAlarm(alarmId);
 
         adapter.removeAt(position);
