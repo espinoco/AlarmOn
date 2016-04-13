@@ -183,6 +183,8 @@ public final class AlarmClockService extends Service {
                       ? alarmInfo.getName()
                       : getString(R.string.app_name);
           }
+
+          db.closeConnections();
       }
 
       Notification notification = builder
