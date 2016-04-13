@@ -46,10 +46,6 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import co.mobiwise.materialintro.shape.Focus;
-import co.mobiwise.materialintro.shape.FocusGravity;
-import co.mobiwise.materialintro.view.MaterialIntroView;
-
 /**
  * This is the main Activity for the application.  It contains a ListView
  * for displaying all alarms, a simple clock, and a button for adding new
@@ -206,14 +202,19 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
             }
         };
 
-        requery();
+        if (!AppIntro.isAlarmDeletionShowcased(this)) {
+            requery();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showMaterialIntro();
-            }
-        }, 200);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (adapter.getItemCount() >= 1 && alarmList.getChildAt(0) != null) {
+                        AppIntro.showcaseAlarmDeletion(ActivityAlarmClock.this,
+                                alarmList.getChildAt(0));
+                    }
+                }
+            }, 500);
+        }
     }
 
     private void undoAlarmDeletion(AlarmTime alarmTime,
@@ -224,22 +225,6 @@ public final class ActivityAlarmClock extends AppCompatActivity implements
             db.writeAlarmSettings(newAlarmId, alarmSettings);
 
             requery();
-        }
-    }
-
-    private void showMaterialIntro() {
-        if (adapter.getItemCount() >= 1 && alarmList.getChildAt(0) != null) {
-            new MaterialIntroView.Builder(this)
-                    .enableDotAnimation(false)
-                    .enableIcon(true)
-                    .setFocusGravity(FocusGravity.CENTER)
-                    .setFocusType(Focus.NORMAL)
-                    .setDelayMillis(200)
-                    .enableFadeAnimation(true)
-                    .setInfoText(getString(R.string.swipe_right_to_delete))
-                    .setTarget(alarmList.getChildAt(0))
-                    .setUsageId("material_intro_id_1234")
-                    .show();
         }
     }
 
